@@ -1,0 +1,130 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.berrergate.com/.well-known/x402.json
+derived_from: openapi/berrergate-com-openapi.json
+docs:
+- https://api.berrergate.com/llms.txt
+- https://api.berrergate.com/.well-known/ai-catalog.json
+- https://berrergate.com/privacy/
+summary: >-
+  BerrerGate's conformance profile is the agent-commerce protocol stack: an A2A agent card in the 1.0 shape
+  (supportedInterfaces[] with protocolVersion "1.0" on HTTP+JSON and JSON-RPC bindings), an MCP server that
+  declares protocol version 2026-07-28 and publishes a server.json manifest on the 2025-12-11 schema, x402
+  version 2 payments in USDC on Base (CAIP-2 eip155:8453) — VERIFIED live from a real HTTP 402 carrying the
+  PAYMENT-REQUIRED header and an accepts[] block — JSON-RPC 2.0 on the A2A and MCP endpoints, an AI Registry
+  Discovery catalog with a did:web identity, and a required x-idempotency-key header on every paid write. It
+  declares no OAuth/OIDC, no RFC 9457 problem details, no RFC 9116 security.txt, no RFC 9727 API catalog
+  and no RFC 8594 sunset signalling. There is no sector standard for agent procurement intelligence; the
+  x402 v2 payload and the A2A card are the contract-level signatures this market has.
+standards:
+- id: a2a
+  name: Agent2Agent protocol
+  version: '1.0'
+  conforms: true
+  evidence: >-
+    a2a/berrergate-com-agent-card.json — supportedInterfaces [{url https://api.berrergate.com/a2a/v1,
+    protocolBinding HTTP+JSON, protocolVersion "1.0"}, {url https://api.berrergate.com/a2a/jsonrpc,
+    protocolBinding JSONRPC, protocolVersion "1.0"}], capabilities object, skills[] of 12, provider
+    {Berrer, https://berrergate.com}; served with content-type application/a2a+json. POST
+    https://api.berrergate.com/a2a/jsonrpc answers JSON-RPC 2.0 (-32601 Method not found for tasks/get and
+    agent/getAuthenticatedExtendedCard — only SendMessage is implemented per the OpenAPI summary). Graded in
+    a2a/berrergate-com-a2a.yml.
+  domain_standard_signature: true
+- id: x402
+  name: x402 HTTP payment protocol
+  version: '2'
+  conforms: true
+  verification: verified
+  evidence: >-
+    POST https://api.berrergate.com/v1/research with an x-idempotency-key and no payment returned HTTP 402
+    with a PAYMENT-REQUIRED response header (base64 JSON) and body {"x402Version":2, "accepts":[{"scheme":
+    "exact","network":"eip155:8453","amount":"20000","asset":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo":"0x1090DDAf854Ff0f6A65F24a866C29C46fdDa0a8a","maxTimeoutSeconds":60,"extra":{"name":"USD Coin",
+    "version":"2"}}], "resource":{...}, "extensions":{"bazaar":{...}}}. The server exposes payment-required
+    and payment-response via Access-Control-Expose-Headers and accepts payment-signature. The provider also
+    publishes /.well-known/x402.json (x402Version 2) — saved under well-known/. Nothing was paid.
+  domain_standard_signature: true
+  note: The 402 challenge, its header and its PaymentRequirements payload were all observed; only the settlement leg (PAYMENT-SIGNATURE retry) was not exercised.
+- id: mcp
+  name: Model Context Protocol
+  version: '2026-07-28'
+  conforms: false
+  claimed: true
+  evidence: >-
+    Declared in mcp/berrergate-com-mcp-server.json (via the AI Registry catalog: "Stateless MCP 2026-07-28
+    discovery/intake adapter") and enforced by the endpoint (400 A10A10_MCP_PROTOCOL_VERSION_REQUIRED
+    without the header). NOT verified: with MCP-Protocol-Version: 2026-07-28 every standard initialize and
+    tools/list shape returned -32600 "Invalid MCP request" / "MCP _meta protocolVersion required", so a
+    stock Streamable HTTP client cannot complete the handshake. See mcp/berrergate-com-mcp.yml.
+- id: mcp-server-json
+  name: MCP server.json manifest
+  version: '2025-12-11'
+  conforms: true
+  evidence: https://api.berrergate.com/.well-known/mcp/server.json — $schema https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json, name com.berrergate/capability-wisdom, version 1.0.0, remotes[0] {type streamable-http, url https://api.berrergate.com/mcp}, websiteUrl https://berrergate.com.
+- id: json-rpc-2.0
+  conforms: true
+  evidence: 'Both /mcp and /a2a/jsonrpc answer {"jsonrpc":"2.0", ...} with standard -32600 / -32601 error codes.'
+- id: caip-2
+  name: CAIP-2 chain identifier
+  conforms: true
+  evidence: eip155:8453 (Base mainnet) in the 402 accepts[], /.well-known/x402.json, the utility and beta catalogs and GET /v1/agent/capabilities.
+- id: ai-registry-discovery
+  name: AI Registry Discovery catalog (/.well-known/ai-catalog.json)
+  version: '1.0'
+  conforms: true
+  evidence: well-known/berrergate-com-ai-catalog.json — specVersion "1.0", host.identifier did:web:berrergate.com, five entries typed application/a2a-agent-card+json, application/vnd.modelcontextprotocol+json, application/openapi+json and application/json.
+- id: did-web
+  name: did:web decentralized identifier
+  conforms: true
+  verification: declared
+  evidence: host.identifier "did:web:berrergate.com" in the AI Registry catalog. The DID document itself (https://berrergate.com/.well-known/did.json) was not probed.
+- id: idempotency
+  name: Idempotency key on mutating operations
+  conforms: true
+  verification: verified
+  evidence: >-
+    openapi/berrergate-com-openapi.json declares an x-idempotency-key header parameter on POST /v1/research,
+    /v1/agent/beta/query, /v1/agent/trial/query, /v1/agent/utility/inference, /v1/agent/utility/spend-router
+    and /v1/agent/wisdom/provider-select. Live: POST /v1/research without the header returned HTTP 400
+    {"ok":false,"error":"IDEMPOTENCY_KEY_REQUIRED"}. The utility catalog states provider output is "stored
+    for idempotent replay". No retention window is published. Coverage is partial — the free preview POSTs
+    and the A2A routes carry no key; see conventions/.
+- id: openapi-3.1
+  conforms: true
+  version: 3.1.0
+  evidence: openapi/berrergate-com-openapi.json openapi "3.1.0"; parses; 25 paths, 25 operations, servers[] https://api.berrergate.com, info.version 2.9.0.
+  gaps:
+  - 0 of 25 operations declare an operationId.
+  - No tags, no components, no securitySchemes, no info.contact or termsOfService.
+  - Inline request schemas only; responses carry descriptions but no schemas.
+  - Routes the provider documents in llms.txt (GET /v1/agent/spend/providers, POST /v1/agent/spend/preview, GET /v1/health) are absent from the contract; /v1/agent/spend/providers and /v1/health answered 200 live.
+- id: schema-org
+  name: schema.org JSON-LD
+  conforms: true
+  evidence: https://berrergate.com/ embeds a SoftwareApplication JSON-LD block with provider Organization "Berrer" and an Offer ("Limited x402 paid beta on Base USDC.").
+- id: rfc9457
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: 'Errors are {"ok":false,"error":"<CODE>","trace_id":"...","request_id":"..."} as application/json; no application/problem+json, no type/title/status members.'
+- id: rfc9116
+  name: security.txt
+  conforms: false
+  evidence: /.well-known/security.txt and /security.txt 404 on berrergate.com and api.berrergate.com.
+- id: rfc9727
+  name: API catalog (/.well-known/api-catalog)
+  conforms: false
+  evidence: 404 on both hosts.
+- id: rfc8594
+  name: Sunset header
+  conforms: false
+  evidence: No Sunset or Deprecation header declared in the contract or observed; the retired POST /v1/search is documented only as a 410 response.
+- id: rfc9728
+  name: OAuth 2.0 Protected Resource Metadata
+  conforms: false
+  evidence: /.well-known/oauth-protected-resource 404 on api.berrergate.com (the MCP resource host).
+- id: oauth2
+  conforms: false
+  evidence: No securitySchemes in the OpenAPI; agent card securitySchemes {} and securityRequirements []; no authorization-server metadata on any host. Access is anonymous plus x402 payment.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration 404 on all hosts.

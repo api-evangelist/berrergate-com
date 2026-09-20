@@ -1,0 +1,30 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  BerrerGate PUBLISHES its own agent guide at https://api.berrergate.com/skill.md ("Human- and agent-readable
+  BerrerGate skill guide", declared in the OpenAPI) — saved verbatim below. The two additional skills were
+  generated from openapi/berrergate-com-openapi.json, llms.txt and the live 402 challenge; the contract
+  declares no operationIds, so each skill names routes by method and path (every one verified in the spec).
+skills:
+- file: berrergate-com-provider-skill.md
+  name: BerrerGate Agent Commerce & Capability Gateway (provider-published)
+  method: searched
+  source: https://api.berrergate.com/skill.md
+  description: The provider's own skill guide — paid Evidence Brief, free discovery, paid utility, paid decision packets and spend-safety statement.
+  operations: 0
+  operation_ids: []
+  routes: ['POST /v1/research', 'GET /v1/agent/discovery/sources', 'POST /v1/agent/discovery/preview', 'POST /v1/agent/utility/inference', 'GET /v1/agent/beta/catalog', 'POST /v1/agent/beta/query']
+- file: berrergate-com-free-preview-then-buy-decision.md
+  name: berrergate-com-free-preview-then-buy-decision
+  method: generated
+  description: Free procurement preview, then buy one of five $0.01 USDC open-source stack decision packets over x402 and read the receipt.
+  operations: 5
+  operation_ids: []
+  routes: ['GET /v1/agent/procurement/catalog', 'POST /v1/agent/procurement/preview', 'GET /v1/agent/beta/catalog', 'POST /v1/agent/beta/query', 'GET /v1/agent/beta/receipts/{receipt_id}']
+- file: berrergate-com-evidence-brief.md
+  name: berrergate-com-evidence-brief
+  method: generated
+  description: Buy a $0.020 USDC Evidence Brief over x402 with the idempotency, size and privacy rules the provider states.
+  operations: 1
+  operation_ids: []
+  routes: ['POST /v1/research']

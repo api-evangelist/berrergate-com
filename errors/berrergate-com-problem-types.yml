@@ -1,0 +1,87 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/berrergate-com-openapi.json
+docs:
+- https://api.berrergate.com/llms.txt
+- https://api.berrergate.com/skill.md
+format: vendor-json
+media_type: application/json
+envelope:
+  shape: '{"ok": false, "error": "<UPPER_SNAKE_CODE or message>", "trace_id": "<uuid>", "request_id": "<uuid>"}'
+  code_field: error
+  trace_fields: [trace_id, request_id]
+  note: >-
+    Observed live on 400, 404 and 503. The 402 is the exception — its body is the x402 v2
+    PaymentRequirements object ({"x402Version":2,"error":"...","accepts":[...],"resource":{...},
+    "extensions":{...}}) and the same payload travels base64-encoded in a PAYMENT-REQUIRED response header.
+    Successful bodies carry {"ok": true, ..., "trace_id", "request_id"} as well, so trace_id is present on
+    every response. Not RFC 9457.
+summary: >-
+  The contract declares eight status codes across 25 operations (200, 402, 404, 409, 410, 429, 502, 503)
+  with one-line descriptions and no response schemas; every code below that has an observed body was seen
+  on 2026-09-19 without paying or authenticating. Codes are UPPER_SNAKE strings, several prefixed with the
+  provider's internal release identifiers (A10A10_...).
+problem_types:
+- code: IDEMPOTENCY_KEY_REQUIRED
+  status: 400
+  title: Idempotency key missing
+  detail: A paid or committing POST was sent without the x-idempotency-key header.
+  observed: 'POST /v1/research with no x-idempotency-key -> {"ok":false,"error":"IDEMPOTENCY_KEY_REQUIRED","trace_id":"03a00ccf-...","request_id":"03a00ccf-..."}'
+  applies_to: ['POST /v1/research', 'POST /v1/agent/beta/query', 'POST /v1/agent/trial/query', 'POST /v1/agent/utility/inference', 'POST /v1/agent/utility/spend-router', 'POST /v1/agent/wisdom/provider-select']
+  remediation: Send a caller-generated x-idempotency-key; reuse the same key to replay the same request safely.
+- code: A10A10_MCP_PROTOCOL_VERSION_REQUIRED
+  status: 400
+  title: MCP protocol version header missing
+  detail: POST /mcp without an MCP-Protocol-Version header. The body names the required value.
+  observed: '{"ok":false,"error":"A10A10_MCP_PROTOCOL_VERSION_REQUIRED","required":"2026-07-28","trace_id":"...","request_id":"..."}'
+  applies_to: ['POST /mcp']
+  remediation: 'Send MCP-Protocol-Version: 2026-07-28. Note that the server then still rejects standard initialize/tools/list bodies with JSON-RPC -32600 (see mcp/).'
+- code: PAYMENT_REQUIRED
+  status: 402
+  title: x402 payment required
+  detail: A paid route was called without a PAYMENT-SIGNATURE header. The body and the PAYMENT-REQUIRED header carry the x402 v2 PaymentRequirements (scheme exact, network eip155:8453, asset USDC, amount in atomic units, payTo, maxTimeoutSeconds 60).
+  observed: 'POST /v1/research -> 402, body.error "PAYMENT-SIGNATURE header is required", payment_signature_sent false, payment_initiated false, provider_call_performed false, settlement_contacted false'
+  applies_to: ['POST /v1/research', 'POST /v1/agent/beta/query', 'POST /v1/agent/utility/inference', 'POST /v1/agent/utility/spend-router', 'GET /v1/agent/canary/browser-automation-select']
+  remediation: Per llms.txt — omit PAYMENT-SIGNATURE on the first POST to receive the canonical requirement, settle it, then retry the identical request (same x-idempotency-key) with PAYMENT-SIGNATURE.
+- code: NOT_FOUND
+  status: 404
+  title: Route or resource not found
+  observed: 'GET /openapi.yaml, GET /mcp, GET /robots.txt on api.berrergate.com -> {"ok":false,"error":"NOT_FOUND","trace_id":"...","request_id":"..."} (135 bytes)'
+  applies_to: ['any unknown path', 'GET /v1/agent/beta/receipts/{receipt_id}', 'POST /v1/agent/beta/query', 'POST /v1/agent/trial/query', 'POST /v1/agent/wisdom/provider-select']
+  declared: 'Declared on the receipt, beta query, trial query and provider-select operations (unknown receipt_id / capability_key).'
+- code: CONFLICT
+  status: 409
+  title: Conflict
+  detail: Declared, not observed. The canary route describes it as "Canary not armed or already consumed"; on beta/trial/inference/provider-select it is undocumented beyond the status.
+  applies_to: ['GET /v1/agent/canary/browser-automation-select', 'POST /v1/agent/beta/query', 'POST /v1/agent/trial/query', 'POST /v1/agent/utility/inference', 'POST /v1/agent/wisdom/provider-select']
+- code: GONE
+  status: 410
+  title: Superseded route
+  detail: 'POST /v1/search is declared with a single 410 response — summary "Superseded paid search route". Its successor is POST /v1/research (the Evidence Brief).'
+  applies_to: ['POST /v1/search']
+- code: RATE_LIMITED
+  status: 429
+  title: Too many requests
+  detail: Declared on the paid and trial routes; not observed. No rate-limit or Retry-After headers are documented. Published caps live in the utility catalog (see rate-limits/).
+  applies_to: ['POST /v1/research', 'POST /v1/agent/beta/query', 'POST /v1/agent/trial/query', 'POST /v1/agent/utility/inference', 'POST /v1/agent/utility/spend-router']
+- code: UPSTREAM_ERROR
+  status: 502
+  title: Upstream failure
+  detail: Declared only on POST /v1/research (the one route that may make a bounded live web-search call after settlement). Not observed.
+  applies_to: ['POST /v1/research']
+- code: SERVICE_UNAVAILABLE
+  status: 503
+  title: Product inactive or service error
+  detail: Declared on the trial, utility, research and spend-router routes (products are independently activated — the utility catalog shows spend_router STAGED_DISABLED).
+  observed: 'GET /v1/agent/decision -> 503 {"ok":false,"error":"decisionSort is not defined","trace_id":"a52b78a1-...","request_id":"a52b78a1-..."} — a raw runtime exception message returned as the error code on a route the contract declares as 200-only.'
+  applies_to: ['GET /v1/agent/trial/catalog', 'POST /v1/agent/trial/query', 'POST /v1/agent/utility/inference', 'POST /v1/agent/utility/spend-router', 'POST /v1/research', 'GET /v1/agent/decision (observed, undeclared)']
+- code: INVALID_MCP_REQUEST
+  status: 200
+  title: JSON-RPC -32600 on /mcp
+  detail: 'HTTP 200 carrying {"jsonrpc":"2.0","id":..,"error":{"code":-32600,"message":"Invalid MCP request" | "MCP _meta protocolVersion required","data":{...}}}. Returned for every standard initialize/tools/list body tried.'
+  applies_to: ['POST /mcp']
+- code: METHOD_NOT_FOUND
+  status: 200
+  title: JSON-RPC -32601 on /a2a/jsonrpc
+  detail: 'HTTP 200 carrying {"jsonrpc":"2.0","id":..,"error":{"code":-32601,"message":"Method not found"}} for tasks/get and agent/getAuthenticatedExtendedCard. Only message/send is implemented (OpenAPI: "A2A JSON-RPC v1.0 SendMessage compatibility interface").'
+  applies_to: ['POST /a2a/jsonrpc']

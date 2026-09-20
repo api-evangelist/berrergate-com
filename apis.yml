@@ -1,18 +1,134 @@
 aid: berrergate-com
 name: Berrer
-description: 'Berrer is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Berrer runs BerrerGate (berrergate.com), an agent-native "tool and provider intelligence" service: an AI
+  agent describes a task in natural language and BerrerGate maps it to agent-usable tools, APIs and provider
+  categories, returns a free, cache-only procurement preview, and sells tightly bounded "decision packets" —
+  evidence-backed shortlists of commercially cleared open-source implementations for observability,
+  orchestration, scraping, analytics and browser automation — plus a paid Evidence Brief and a low-cost
+  pay-per-call AI answer, all settled in USDC on Base through x402 with no account. The same surface is
+  published three ways from api.berrergate.com: a 25-operation OpenAPI 3.1 contract at /openapi.json, an
+  A2A agent card at /.well-known/agent-card.json with twelve skills (listed as Verified in the Global A2A
+  Registry), and a remote MCP endpoint at /mcp declared in an MCP server.json manifest; discovery is rounded
+  out by an x402 manifest, an AI Registry catalog, an llms.txt and a provider-written skill.md. The company
+  states it is experimental, publishes no terms of service, no contact address and no pricing page.
 url: https://raw.githubusercontent.com/api-evangelist/berrergate-com/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-09-19 (local-v3; was a2a-registry harvest stub)
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- Agents
+- Agent Commerce
+- A2A
+- MCP
+- x402
+- Procurement
+- Tool Discovery
+- API Discovery
+- AI Inference
+- Research
+- agent-native
+tags_raw:
+- Agents
+- Agent commerce
+- A2A
+- MCP
+- x402
+- Procurement
+- Tool discovery
+- API discovery
+- AI inference
+- Research
+- Agent-native
+apis:
+- aid: berrergate-com:berrergate-tool-provider-intelligence-api
+  name: BerrerGate Tool & Provider Intelligence API
+  description: >-
+    Agent-consumable REST API at https://api.berrergate.com: free procurement and discovery previews over
+    ten capability categories and eight prewarmed sources, a 32-product free-trial catalog, x402-paid
+    routes for five $0.01 USDC open-source stack decision packets, a $0.020 Evidence Brief and dynamic
+    $0.00125-$0.00225 micro-inference, settlement receipts, machine-consumable capability and value
+    catalogs, and the A2A transport routes. 25 operations across 25 paths, OpenAPI 3.1.0, version 2.9.0,
+    no securitySchemes (anonymous plus per-request x402), x-idempotency-key required on every paid write,
+    no operationIds declared.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com
+  tags:
+  - Agents
+  - Procurement
+  - Tool Discovery
+  - x402
+  - AI Inference
+  properties:
+  - type: OpenAPI
+    url: openapi/berrergate-com-openapi.json
+  - type: OpenAPI
+    name: BerrerGate OpenAPI 3.1 (provider-hosted)
+    url: https://api.berrergate.com/openapi.json
+  - type: APIReference
+    url: https://api.berrergate.com/openapi.json
+  - type: Documentation
+    url: https://berrergate.com/status/
+  - type: GettingStarted
+    name: Provider skill guide (skill.md)
+    url: https://api.berrergate.com/skill.md
+  - type: Overlay
+    url: overlays/berrergate-com-openapi-overlay.yaml
+  - type: ErrorCatalog
+    url: errors/berrergate-com-problem-types.yml
+- aid: berrergate-com:berrergate-mcp-server
+  name: BerrerGate MCP Server
+  description: >-
+    Remote Model Context Protocol endpoint at https://api.berrergate.com/mcp (Streamable HTTP, POST only),
+    declared in the provider's llms.txt, in an MCP server.json manifest at /.well-known/mcp/server.json
+    (schema 2025-12-11, name com.berrergate/capability-wisdom, version 1.0.0) and in its AI Registry catalog
+    as a "stateless MCP 2026-07-28 discovery/intake adapter" that hands out x402 purchase instructions but
+    never settles money. The endpoint answers JSON-RPC 2.0 and demands MCP-Protocol-Version 2026-07-28, but
+    rejected every standard initialize and tools/list shape with -32600, so its tool list could not be
+    introspected; no credential is asked for and no OAuth metadata is served.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com/mcp
+  tags:
+  - MCP
+  - agent-native
+  - Agent Commerce
+  properties:
+  - type: MCPServer
+    url: mcp/berrergate-com-mcp.yml
+  - type: MCPServer
+    name: BerrerGate MCP endpoint (Streamable HTTP)
+    url: https://api.berrergate.com/mcp
+  - type: MCPServer
+    name: MCP server.json manifest (provider-hosted)
+    url: https://api.berrergate.com/.well-known/mcp/server.json
+  - type: ToolCrosswalk
+    url: mcp/berrergate-com-tool-crosswalk.yml
+- aid: berrergate-com:berrergate-a2a-agent
+  name: BerrerGate A2A Agent
+  description: >-
+    Agent2Agent surface: an agent card served from https://api.berrergate.com/.well-known/agent-card.json
+    (content-type application/a2a+json, version 2.9.0) declaring two interfaces — HTTP+JSON at /a2a/v1 and
+    JSON-RPC at /a2a/jsonrpc, each protocolVersion "1.0" — and twelve skills: four free discovery and
+    preview skills, the $0.020 Evidence Brief, dynamic-priced micro-inference, a purchase-instructions
+    skill and five $0.01 USDC open-source stack decision skills, all settled over x402 on Base. Streaming,
+    push notifications and the extended card are declared unsupported; only message/send is implemented on
+    the JSON-RPC endpoint. Registered in the Global A2A Registry on 2026-08-27 as a Verified agent.
+  humanURL: https://www.a2a-registry.org/agent/com.berrergate.berrergate_capability_wisdom_agent
+  baseURL: https://api.berrergate.com/a2a/jsonrpc
+  tags:
+  - A2A
+  - agent-native
+  - x402
+  properties:
+  - type: AgentCard
+    url: a2a/berrergate-com-a2a.yml
+  - type: AgentCard
+    name: A2A Agent Card (provider-hosted)
+    url: https://api.berrergate.com/.well-known/agent-card.json
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -21,3 +137,58 @@ maintainers:
 common:
 - type: Website
   url: https://berrergate.com/
+- type: Documentation
+  url: https://berrergate.com/status/
+- type: PrivacyPolicy
+  url: https://berrergate.com/privacy/
+- type: LLMsTxt
+  url: llms/berrergate-com-llms.txt
+- type: LLMsTxt
+  name: llms.txt (provider-hosted, API host)
+  url: https://api.berrergate.com/llms.txt
+- type: AgentCard
+  url: a2a/berrergate-com-a2a.yml
+- type: MCPServer
+  url: mcp/berrergate-com-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/berrergate-com-tool-crosswalk.yml
+- type: WellKnown
+  url: well-known/berrergate-com-well-known.yml
+- type: AgenticAccess
+  url: agentic-access/berrergate-com-agentic-access.yml
+- type: DomainSecurity
+  url: security/berrergate-com-domain-security.yml
+- type: Authentication
+  url: authentication/berrergate-com-authentication.yml
+- type: Conventions
+  url: conventions/berrergate-com-conventions.yml
+- type: Idempotency
+  url: conventions/berrergate-com-conventions.yml
+- type: ErrorCatalog
+  url: errors/berrergate-com-problem-types.yml
+- type: DataModel
+  url: data-model/berrergate-com-data-model.yml
+- type: RateLimits
+  url: rate-limits/berrergate-com-rate-limits.yml
+- type: Plans
+  url: plans/berrergate-com-plans-pricing.yml
+- type: Conformance
+  url: conformance/berrergate-com-conformance.yml
+- type: Lifecycle
+  url: lifecycle/berrergate-com-lifecycle.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: AgentSkill
+  name: Provider-published skill guide (skill.md)
+  url: skills/berrergate-com-provider-skill.md
+- type: Packages
+  url: packages/berrergate-com-packages.yml
+- type: Overlay
+  url: overlays/berrergate-com-openapi-overlay.yaml
+- type: AITransparency
+  url: https://berrergate.com/privacy/
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 29
+  pass: local-v3

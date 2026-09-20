@@ -1,0 +1,72 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.berrergate.com/v1/agent/utility/catalog
+docs:
+- https://api.berrergate.com/openapi.json
+- https://api.berrergate.com/llms.txt
+limit_count: 6
+summary: >-
+  BerrerGate publishes hard CALL CAPS per paid utility product in a machine-readable catalog — daily,
+  lifetime and per-payer-daily — rather than a requests-per-second ceiling, and declares HTTP 429 on the
+  five paid/trial POST routes without documenting any rate-limit or Retry-After header. No limit headers
+  were observed on live responses (200 catalogs, 400, 402, 404, 503). Input-size ceilings are declared in
+  the contract's request schemas.
+rate_limits:
+- name: Micro-inference daily cap
+  scope: per-product (all payers)
+  limit: 75
+  window: 1 day
+  metric: settled call
+  applies_to: ['POST /v1/agent/utility/inference']
+  source: 'GET /v1/agent/utility/catalog products[inference].daily_max_calls'
+- name: Micro-inference lifetime cap
+  scope: per-product (all payers)
+  limit: 150
+  window: lifetime of the pilot
+  metric: settled call
+  applies_to: ['POST /v1/agent/utility/inference']
+  source: 'GET /v1/agent/utility/catalog products[inference].lifetime_max_calls'
+  note: '"weekend_facilitator_guard": "combined utility lifetime attempts <=225 to remain far below published PayAI free-settlement allowance; reprice before scale"'
+- name: Micro-inference per-payer daily cap
+  scope: per-payer (paying wallet)
+  limit: 25
+  window: 1 day
+  metric: settled call
+  applies_to: ['POST /v1/agent/utility/inference']
+  source: 'GET /v1/agent/utility/catalog products[inference].per_payer_daily_max_calls'
+- name: Spend router daily cap
+  scope: per-product (all payers)
+  limit: 40
+  window: 1 day
+  metric: call
+  applies_to: ['POST /v1/agent/utility/spend-router']
+  source: 'GET /v1/agent/utility/catalog products[spend_router].daily_max_calls (product STAGED_DISABLED on 2026-09-19)'
+- name: Spend router lifetime cap
+  scope: per-product (all payers)
+  limit: 75
+  window: lifetime of the pilot
+  metric: call
+  applies_to: ['POST /v1/agent/utility/spend-router']
+  source: 'GET /v1/agent/utility/catalog products[spend_router].lifetime_max_calls'
+- name: Spend router per-payer daily cap
+  scope: per-payer (paying wallet)
+  limit: 20
+  window: 1 day
+  metric: call
+  applies_to: ['POST /v1/agent/utility/spend-router']
+  source: 'GET /v1/agent/utility/catalog products[spend_router].per_payer_daily_max_calls'
+size_and_time_limits:
+- {name: Evidence Brief query, limit: '1-700 chars', source: 'openapi POST /v1/research requestBody'}
+- {name: Evidence Brief max_evidence, limit: '1-5', source: 'openapi POST /v1/research requestBody'}
+- {name: Inference prompt, limit: '<= 3200 (3,200 UTF-8 bytes)', source: 'openapi POST /v1/agent/utility/inference; llms.txt'}
+- {name: Inference output, limit: '32-512 tokens', source: 'openapi POST /v1/agent/utility/inference requestBody.max_output_tokens'}
+- {name: Discovery preview query, limit: '1-300 chars', source: 'openapi POST /v1/agent/discovery/preview'}
+- {name: Spend-router query, limit: '1-100 chars', source: 'openapi POST /v1/agent/utility/spend-router'}
+- {name: x402 payment timeout, limit: 'maxTimeoutSeconds 60', source: 'observed 402 accepts[0] on POST /v1/research'}
+- {name: Evidence Brief live search, limit: 'at most 1 provider web-search call per brief', source: 'skill.md; 402 extensions.berrergate-evidence-brief.info.provider_web_search_calls_max 1'}
+exhaustion:
+  status: 429
+  headers: []
+  media_type: application/json
+  declared_on: ['POST /v1/research', 'POST /v1/agent/beta/query', 'POST /v1/agent/trial/query', 'POST /v1/agent/utility/inference', 'POST /v1/agent/utility/spend-router']
+  note: Declared in the contract with the bare description; no Retry-After, RateLimit-* or X-RateLimit-* header is documented or was observed. Not triggered during this pass.

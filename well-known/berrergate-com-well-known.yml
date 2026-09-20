@@ -1,0 +1,149 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* paths on berrergate.com, www.berrergate.com and
+  api.berrergate.com (the OpenAPI servers[] host, the MCP server host and the A2A endpoint host), 2026-09-19.
+  Every row is a request that was actually issued; every status is the one returned.
+summary:
+  hosts_probed: 3
+  paths_probed: 33
+  documents_served: 5
+  hit_count: 5
+  negative_control: passed
+  note: >-
+    BerrerGate serves ALL of its well-known documents from the API host, api.berrergate.com: the A2A agent
+    card at both the canonical /.well-known/agent-card.json and the legacy /.well-known/agent.json (identical
+    8,039-byte bodies, content-type application/a2a+json), an x402 v2 discovery manifest at
+    /.well-known/x402.json, an AI Registry Discovery catalog at /.well-known/ai-catalog.json (did:web
+    identity, five entries pointing at the card, the MCP manifest, the OpenAPI and the x402 manifest) and an
+    MCP server.json at /.well-known/mcp/server.json (schema 2025-12-11). The apex berrergate.com 302s
+    /.well-known/agent-card.json to the API host and returns a real 404 for everything else;
+    www.berrergate.com answers Cloudflare 522 (origin unreachable) on every path, so nothing is served there.
+    Unknown paths on the API host return the service's own JSON 404 ({"ok":false,"error":"NOT_FOUND",...},
+    135 bytes) and a negative-control path that cannot exist also 404s, so each 200 above is a served
+    document, not a catch-all. NOT served on any host: security.txt (RFC 9116), openid-configuration,
+    oauth-authorization-server, oauth-protected-resource (RFC 9728 — probed on the MCP host itself),
+    api-catalog (RFC 9727), ai-plugin.json, mcp.json.
+hosts:
+- host: api.berrergate.com
+  role: OpenAPI servers[] host, MCP server host (/mcp) and A2A endpoint host (/a2a/jsonrpc, /a2a/v1)
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/a2a+json; charset=utf-8
+    bytes: 8039
+    file: ../a2a/berrergate-com-agent-card.json
+    standard: A2A Agent Card (1.0 shape — supportedInterfaces[] each carrying protocolVersion "1.0")
+    note: Saved verbatim under a2a/ and graded in a2a/berrergate-com-a2a.yml.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/a2a+json; charset=utf-8
+    bytes: 8039
+    note: Legacy pre-0.3 path, served with the identical body as the canonical path. Not saved twice.
+  - path: /.well-known/x402.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 15198
+    file: berrergate-com-x402.json
+    standard: x402 discovery manifest (x402Version 2) with Bazaar metadata
+    note: >-
+      Lists the paid resources (POST /v1/agent/beta/query at 10000 atomic USDC on eip155:8453 with five
+      products; the Evidence Brief, inference and spend-router utilities), the payTo address and the asset.
+  - path: /.well-known/ai-catalog.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 2367
+    file: berrergate-com-ai-catalog.json
+    standard: AI Registry Discovery catalog (specVersion 1.0; host identifier did:web:berrergate.com)
+    note: Five entries — the A2A card, the MCP server.json, two OpenAPI entries and the x402 manifest.
+  - path: /.well-known/mcp/server.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 819
+    file: ../mcp/berrergate-com-mcp-server.json
+    standard: MCP server.json (static.modelcontextprotocol.io schema 2025-12-11)
+    note: Declares one streamable-http remote at https://api.berrergate.com/mcp. Saved under mcp/.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    note: This is the MCP resource host (https://api.berrergate.com/mcp); no RFC 9728 metadata is served for it.
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /.well-known/apievangelist-negative-control-7f3a9c.json
+    status: 404
+    note: Negative control — a path that cannot exist returns the same JSON 404 as every other miss.
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    bytes: 3001
+    file: ../llms/berrergate-com-llms.txt
+    note: Not a /.well-known path; recorded because the homepage advertises it as a machine surface.
+  - path: /robots.txt
+    status: 404
+- host: berrergate.com
+  role: Website (registrable domain)
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 302
+    note: Redirects to https://api.berrergate.com/.well-known/agent-card.json.
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /.well-known/x402.json
+    status: 404
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    bytes: 1247
+    file: ../llms/berrergate-com-www-llms.txt
+    note: A shorter site-level llms.txt that points at the API host's machine surfaces.
+  - path: /robots.txt
+    status: 200
+    note: 'User-agent: * / Allow: / / Sitemap: https://berrergate.com/sitemap.xml'
+  - path: /sitemap.xml
+    status: 200
+    note: Four URLs — /, /partners/, /status/, /privacy/.
+- host: www.berrergate.com
+  role: www alias — DNS resolves to the same Cloudflare IPs but the origin is unreachable
+  documents:
+  - path: /
+    status: 522
+    note: Cloudflare 522 (connection timed out to origin) on every path probed; nothing is served on www.
+  - path: /.well-known/agent-card.json
+    status: 522
+  - path: /.well-known/security.txt
+    status: 522
+  - path: /.well-known/openid-configuration
+    status: 522
+  - path: /.well-known/oauth-authorization-server
+    status: 522
+  - path: /.well-known/oauth-protected-resource
+    status: 522
+  - path: /.well-known/api-catalog
+    status: 522
+  - path: /.well-known/ai-plugin.json
+    status: 522

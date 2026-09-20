@@ -1,0 +1,74 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/berrergate-com-openapi.json
+derived_from:
+- https://api.berrergate.com/v1/agent/beta/catalog
+- https://api.berrergate.com/v1/agent/utility/catalog
+- https://api.berrergate.com/v1/agent/procurement/catalog
+- https://api.berrergate.com/v1/agent/discovery/sources
+- https://api.berrergate.com/v1/agent/capabilities
+summary: >-
+  The OpenAPI declares no component schemas and no response schemas, so the entity graph below is read from
+  the contract's inline request bodies and from the live, anonymous catalog responses fetched on 2026-09-19.
+  The organising key is capability_key (e.g. agent.browser_automation); products (paid decision packets,
+  free-trial products, utility products) hang off a capability and an intent; a settlement produces a
+  receipt. Identifier formats are observed, not documented.
+entities:
+- name: Capability
+  key: capability_key
+  id_format: 'dotted lowercase, e.g. agent.web_search_api, agent.browser_automation, real.dns.lookup, berrergate.market.purchase'
+  fields: [capability_key, name, free_preview, supported_intents, commercial_state, input_data_classification, price_atomic, network, purchase_url]
+  source: GET /v1/agent/procurement/catalog (10 rows), GET /v1/agent/capabilities
+- name: Intent
+  key: intent
+  enum: [SELECT, COMPARE, TRANSACTION_READINESS, COST_ESTIMATE, CHANGE, RISK, MARKET_MAP]
+  source: 'openapi POST /v1/agent/trial/query requestBody.intent enum; only SELECT is commercially executable per GET /v1/agent/capabilities'
+- name: DecisionProduct
+  key: product_id
+  id_format: 'a10a9r3_product_<24 hex>'
+  fields: [product_id, contract, capability_key, intent, action_kind, state, price_atomic, commercial_authority_state, commercial_authority_sha256, commercial_packet_sha256, commercial_scope, 'included[]', confidence_band, qualifying_provider_count, strong_provider_count, market_priority_milli]
+  source: GET /v1/agent/beta/catalog (5 rows), /.well-known/x402.json resources[0].products
+- name: TrialProduct
+  key: product_id
+  id_format: 'a10a9_product_<24 hex>'
+  fields: [product_id, capability_key, action_kind, intent, state, readiness_bps, market_priority_milli, qualifying_provider_count, strong_provider_count, source_a10a6_snapshot_sha256, source_a10a9_run_id]
+  source: GET /v1/agent/trial/catalog (32 rows)
+- name: UtilityProduct
+  key: utility_key
+  enum: [inference, spend_router]
+  fields: [utility_key, name, state, endpoint_path, pricing_mode, min_price_atomic, max_price_atomic, provider_name, daily_max_calls, lifetime_max_calls, per_payer_daily_max_calls, enabled, 'detail{}']
+  source: GET /v1/agent/utility/catalog
+- name: Receipt
+  key: receipt_id
+  id_format: undocumented
+  fields: []
+  source: 'openapi GET /v1/agent/beta/receipts/{receipt_id} ("Read a paid-beta settlement receipt"); response schema not declared'
+- name: PaymentRequirement
+  key: null
+  fields: [x402Version, scheme, network, amount, asset, payTo, maxTimeoutSeconds, 'resource{url,description,mimeType,serviceName,tags}', 'extensions{bazaar}']
+  source: observed 402 body on POST /v1/research; /.well-known/x402.json
+- name: EvidenceItem
+  key: null
+  fields: [source_type, title, url, snippet, evidence_sha256]
+  source: 402 body extensions.bazaar.info.output.example on POST /v1/research (the Evidence Brief answer shape — answer, confidence, freshness, routing_mode, evidence[])
+- name: DiscoverySource
+  key: source_key
+  enum: [apis_guru, bitrefill_x402, coinbase_x402_bazaar, market402, official_mcp_registry, open402_directory, the402, cryptorefills]
+  fields: [source_key, display_name, state, 'categories[]', 'capabilities[]', cached_items, latest_observed_at, docs_url]
+  source: GET /v1/agent/discovery/sources; GET /v1/agent/spend/providers (provider_key)
+- name: A2ASkill
+  key: id
+  id_format: 'berrergate-<slug>, e.g. berrergate-paid-5-agent-browser-automation'
+  fields: [id, name, description, 'tags[]', 'examples[]', 'inputModes[]', 'outputModes[]']
+  source: a2a/berrergate-com-agent-card.json (12 rows)
+relationships:
+- {from: DecisionProduct, to: Capability, type: belongs_to, via: capability_key}
+- {from: DecisionProduct, to: Intent, type: belongs_to, via: intent}
+- {from: TrialProduct, to: Capability, type: belongs_to, via: capability_key}
+- {from: TrialProduct, to: Intent, type: belongs_to, via: intent}
+- {from: Capability, to: DecisionProduct, type: has_many, via: capability_key}
+- {from: Receipt, to: DecisionProduct, type: belongs_to, via: 'settlement of POST /v1/agent/beta/query (field undocumented)'}
+- {from: PaymentRequirement, to: DecisionProduct, type: has_many, via: 'x402.json resources[].products[]'}
+- {from: A2ASkill, to: Capability, type: references, via: 'skill id suffix matches capability_key for the five paid-N skills'}
+- {from: DiscoverySource, to: UtilityProduct, type: references, via: 'spend_router.provider_name = Bitrefill official catalog'}
+render: null

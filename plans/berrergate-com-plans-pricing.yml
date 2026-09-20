@@ -1,0 +1,87 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.berrergate.com/v1/agent/beta/catalog
+docs:
+- https://api.berrergate.com/v1/agent/utility/catalog
+- https://api.berrergate.com/.well-known/x402.json
+- https://api.berrergate.com/llms.txt
+- https://berrergate.com/
+plan_count: 6
+currency: USDC
+model: pay-per-call in USDC on Base (eip155:8453) via x402; no subscription, no account, no card payments; a free tier needs nothing
+summary: >-
+  BerrerGate publishes no tiers and no pricing page. Prices are read from machine-readable catalog endpoints
+  (all anonymous) and from the live 402 challenge; amounts are in atomic USDC (6 decimals) and converted
+  here. On 2026-09-19 the paid surface was: five open-source stack decision packets at $0.01 each (state
+  ACTIVE), the Evidence Brief at $0.020, micro-inference at a dynamic $0.00125-$0.00225 (ACTIVE_WEEKEND_PILOT
+  with hard call caps), a $0.001 spend router that is STAGED_DISABLED, and a $0.01 one-shot canary. The
+  homepage calls the whole paid surface a "limited x402 paid beta" that "may change".
+plans:
+- id: free
+  name: Free discovery and previews
+  price: 0
+  currency: USDC
+  period: per call
+  included: >-
+    GET /v1/agent/procurement/catalog + POST /v1/agent/procurement/preview (10 capability categories, all
+    free_preview true); GET /v1/agent/discovery/sources + POST /v1/agent/discovery/preview (8 prewarmed
+    sources, cache-only); GET /v1/agent/trial/catalog + POST /v1/agent/trial/query (32 products,
+    not_for_sale true, payment_required false); GET /v1/agent/capabilities, /value-catalog,
+    /wisdom/discovery; the A2A natural-language skills that route to the preview
+  limits: ['x-idempotency-key required on POST /v1/agent/trial/query', 'cache-only — no upstream provider call on a customer query']
+  source: https://api.berrergate.com/v1/agent/procurement/catalog
+- id: decision-packet
+  name: Commercially cleared open-source stack decision packet
+  price: 0.01
+  currency: USDC
+  period: per packet
+  included: commercial_authority_provider_evaluations, commercial_authority_shortlists, content_hash_certificate, commercial_authority_certificate, settlement_receipt
+  products: [agent.agent_observability, agent.automation_orchestration, agent.browser_scraping_automation, agent.product_analytics, agent.browser_automation]
+  limits: ['scope OPEN_SOURCE_IMPLEMENTATION_SELECTION_ONLY — "not a hosted-vendor ranking"', 'intent SELECT only', 'request_payment_binding_enforced true; emergency_disable_supported true']
+  operation: 'POST /v1/agent/beta/query'
+  source: https://api.berrergate.com/v1/agent/beta/catalog (price_atomic 10000, state ACTIVE, product_count 5)
+- id: evidence-brief
+  name: Berrer Evidence Brief
+  price: 0.02
+  currency: USDC
+  period: per brief
+  included: concise answer plus up to five evidence items, confidence, freshness and routing provenance; at most one live web-search call, only after settlement
+  limits: ['query 1-700 chars', 'max_evidence 1-5', 'raw query not stored (SHA-256 + topic class retained)']
+  operation: 'POST /v1/research'
+  source: observed 402 on POST /v1/research — accepts[0].amount "20000" atomic USDC; skill.md "$0.020 USDC via x402 on Base when the market-fit canary is active"
+- id: micro-inference
+  name: BerrerGate Micro-Inference
+  price: 0.00125-0.00225
+  currency: USDC
+  period: per call
+  pricing_mode: DYNAMIC_PROFIT_GUARDED
+  included: bounded managed-AI answer, no tools, no web, store=false
+  limits: ['prompt <= 3,200 UTF-8 bytes', 'max_output_tokens 32-512', 'daily_max_calls 75', 'lifetime_max_calls 150', 'per_payer_daily_max_calls 25', 'state ACTIVE_WEEKEND_PILOT']
+  operation: 'POST /v1/agent/utility/inference'
+  source: https://api.berrergate.com/v1/agent/utility/catalog (min_price_atomic 1250, max_price_atomic 2250)
+  note: '"The payment is settled only after provider success and a positive direct-provider margin check."'
+- id: spend-router
+  name: BerrerGate Spend Router
+  price: 0.001
+  currency: USDC
+  period: per catalog query
+  status: STAGED_DISABLED
+  included: read-only official-catalog search for gift cards, vouchers, eSIMs and top-ups; no purchase, custody, issuance or redemption
+  limits: ['enabled false on 2026-09-19', 'daily_max_calls 40', 'lifetime_max_calls 75', 'per_payer_daily_max_calls 20', 'query 1-100 chars']
+  operation: 'POST /v1/agent/utility/spend-router'
+  source: https://api.berrergate.com/v1/agent/utility/catalog (price_atomic 1000, enabled false)
+- id: canary
+  name: One-shot browser-automation SELECT canary
+  price: 0.01
+  currency: USDC
+  period: one settlement
+  limits: ['requires a canary_token query parameter', '409 when not armed or already consumed']
+  operation: 'GET /v1/agent/canary/browser-automation-select'
+  source: openapi/berrergate-com-openapi.json summary "One-shot $0.01 USDC paid browser-automation SELECT canary"
+payment:
+  protocol: x402 v2
+  network: eip155:8453
+  asset: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 (USDC)'
+  pay_to: '0x1090DDAf854Ff0f6A65F24a866C29C46fdDa0a8a'
+  general_payment_collection_enabled: false
+  note: '"general_payment_collection_enabled": false and "broad_production_selling_enabled": false in every catalog — only the named products above are sold.'

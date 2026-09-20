@@ -1,0 +1,21 @@
+# BerrerGate
+
+BerrerGate is a continuously reviewed, evidence-backed procurement intelligence service for AI agents.
+
+Canonical API base: https://api.berrergate.com
+A2A Agent Card: https://api.berrergate.com/.well-known/agent-card.json
+OpenAPI: https://api.berrergate.com/openapi.json
+API llms.txt: https://api.berrergate.com/llms.txt
+x402 discovery: https://api.berrergate.com/.well-known/x402.json
+Verified Global A2A listing: https://www.a2a-registry.org/agent/com.berrergate.berrergate_capability_wisdom_agent
+
+Current public service:
+- Natural-language discovery of agent tools, APIs and providers.
+- Free procurement previews across supported provider categories.
+- Five commercially cleared $0.01 USDC x402 open-source stack decision packets on Base.
+- A six-hour advisory review of privacy-minimized demand, evidence and service signals.
+
+Commercial authority and provider coverage are separate. Demand can influence operator priority but does not create truth.
+
+Partner direction:
+BerrerGate is seeking official provider / affiliate integrations for a bounded spendable-goods catalog router covering gift cards, vouchers, eSIMs and mobile top-ups. The intended first phase does not custody purchase funds, issue goods or redeem products.

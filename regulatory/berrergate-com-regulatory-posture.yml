@@ -1,0 +1,75 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://berrergate.com/privacy/
+summary: >-
+  BerrerGate publishes almost none of the horizontal-regime evidence this artifact looks for. The site has
+  four pages (home, /partners/, /status/, /privacy/) and no Terms of Service, no contact address, no
+  subprocessor list, no DSR channel, no accessibility statement, no SBOM, no transparency report. The one
+  signal that carries substance is AI transparency: the Privacy & Safeguards page and the homepage state,
+  in plain terms, that an AI "advisory steward" reviews service telemetry and enumerate what it cannot do,
+  and the utility catalog labels the inference product's provider as "BerrerGate managed AI". Every
+  conventional path was probed live; every miss is recorded below.
+signals:
+  ai_transparency:
+    url: https://berrergate.com/privacy/
+    section: 'Bounded AI authority'
+    evidence:
+    - source: https://berrergate.com/privacy/
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: >-
+        "Bounded AI authority — The advisory reviewer cannot initiate payment, alter prices, create products,
+        buy paid sources or automatically mutate truth." ... "Privacy-minimized review — The advisory steward
+        is designed without retention of raw prompts, raw agent identifiers, raw referrers or raw user-agent
+        strings in its review loop."
+    - source: https://berrergate.com/
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: >-
+        "BerrerGate runs a bounded six-hour advisory review over privacy-minimized service telemetry ... The
+        reviewer can identify evidence gaps and operational anomalies, but it cannot create facts, change
+        prices, move funds, buy sources or grant commercial authority." Rendered alongside a machine block:
+        steward_state: ACTIVE_ADVISORY_ONLY / truth_mutation: false / payment_authority: false /
+        paid_source_spending: false / product_mutation: false / raw_prompt_stored: false.
+    - source: https://api.berrergate.com/v1/agent/utility/catalog
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"provider_name": "BerrerGate managed AI" ... "reasoning_effort": "none", "tools": false, "store": false'
+    note: >-
+      A published disclosure of where an AI system sits in the service, what data it sees and the authority
+      it is denied, plus a machine-readable mirror of the same statement (GET / and GET
+      /v1/agent/capabilities carry a10a16_steward_advisory_only / a10a16_steward_payment_authority flags).
+      It is an operational-boundary statement rather than a content-labelling policy, and it is carried on
+      the privacy page rather than a dedicated /ai page (/ai/transparency and /transparency both 404).
+probed:
+- {url: 'https://berrergate.com/accessibility', status: 404}
+- {url: 'https://berrergate.com/accessibility/vpat', status: 404}
+- {url: 'https://berrergate.com/legal/subprocessors', status: 404}
+- {url: 'https://berrergate.com/legal/dpa', status: 404}
+- {url: 'https://berrergate.com/privacy/requests', status: 404}
+- {url: 'https://berrergate.com/transparency', status: 404}
+- {url: 'https://berrergate.com/security/sbom', status: 404}
+- {url: 'https://berrergate.com/docs/data-residency', status: 404}
+- {url: 'https://berrergate.com/ai/transparency', status: 404}
+- {url: 'https://berrergate.com/legal/report-content', status: 404}
+- {url: 'https://berrergate.com/terms', status: 404}
+- {url: 'https://berrergate.com/legal', status: 404}
+- {url: 'https://berrergate.com/security', status: 404}
+- {url: 'https://berrergate.com/.well-known/security.txt', status: 404}
+- {url: 'https://berrergate.com/contact', status: 404}
+- {url: 'https://berrergate.com/privacy/', status: 200, note: 'six short statements; no controller identity, no contact, no rights process, no third parties, no retention periods beyond "not retained"'}
+absent:
+  sbom: not published (search only; never derived)
+  support_lifetime: not published
+  accessibility_conformance: not published
+  training_data_summary: not published
+  global_privacy_control: no statement found (not tested by header, per rule)
+  data_subject_request: no channel or process published; the privacy page names no email or form
+  subprocessors: not published — the catalogs name upstream sources (Bitrefill, Cryptorefills, Coinbase x402 Bazaar, APIs.guru, the official MCP registry) as DATA sources for discovery, which is not a processor list
+  data_residency: not published
+  incident_notification: not published
+  age_assurance: not published
+  notice_and_action: not published
+  transparency_report: not published
+  exit_assistance: not published

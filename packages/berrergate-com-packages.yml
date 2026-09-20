@@ -1,0 +1,19 @@
+generated: '2026-09-19'
+method: searched
+source: registry searches 2026-09-19
+package_count: 0
+packages: []
+searched:
+- {registry: npm, query: 'https://registry.npmjs.org/-/v1/search?text=berrergate&size=10', result: 0 packages}
+- {registry: npm, query: 'https://registry.npmjs.org/berrergate, /@berrergate/sdk, /@berrergate/mcp, /berrergate-sdk', status: 404}
+- {registry: pypi, query: 'https://pypi.org/pypi/berrergate/json, /berrer-gate/json', status: 404}
+- {registry: crates, query: 'https://crates.io/api/v1/crates/berrergate', status: 403, note: crates.io refuses unauthenticated non-browser clients; not confirmed either way}
+- {registry: rubygems, query: 'https://rubygems.org/api/v1/gems/berrergate.json', status: 404}
+- {registry: packagist, query: 'https://packagist.org/search.json?q=berrergate', result: 0 packages}
+- {registry: github, query: 'https://api.github.com/search/repositories?q=berrergate', result: 0 repositories}
+- {registry: github-org, query: 'https://api.github.com/users/berrergate', status: 404}
+- {registry: github-user, query: 'https://api.github.com/users/berrer', result: 'user "BerreR" with 0 public repositories, no blog, no bio — no evidence it is this provider; not linked'}
+note: >-
+  BerrerGate publishes no client library, CLI or SDK in any registry searched, and neither its llms.txt nor
+  its skill.md references one — the documented ways in are raw HTTP (OpenAPI 3.1), the MCP endpoint and the
+  A2A card. The MCP server is remote-only (no npx/uvx package). No Packages or SDKs pointer is emitted.

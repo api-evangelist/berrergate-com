@@ -1,0 +1,78 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: https://api.berrergate.com/.well-known/mcp/server.json
+docs:
+- https://api.berrergate.com/llms.txt
+- https://api.berrergate.com/.well-known/ai-catalog.json
+summary: >-
+  BerrerGate publishes ONE remote MCP server at https://api.berrergate.com/mcp, declared in three places the
+  provider controls: the API host's llms.txt ("MCP: POST https://api.berrergate.com/mcp"), an MCP server.json
+  manifest at /.well-known/mcp/server.json (schema 2025-12-11, name com.berrergate/capability-wisdom, version
+  1.0.0, one streamable-http remote) and the AI Registry Discovery catalog, which describes it as a
+  "Stateless MCP 2026-07-28 discovery/intake adapter" with ToolDiscovery, CapabilityCheck and
+  PurchaseInstructions capabilities that "never settles money; canonical payment remains HTTP x402". The
+  endpoint is live and speaks JSON-RPC 2.0, but its tool list could NOT be introspected: without an
+  MCP-Protocol-Version header it answers HTTP 400 {"error":"A10A10_MCP_PROTOCOL_VERSION_REQUIRED",
+  "required":"2026-07-28"}; with that header, initialize and tools/list in every standard shape (bare,
+  params {}, params._meta.protocolVersion, top-level _meta) return -32600 "Invalid MCP request" or "MCP _meta
+  protocolVersion required". The server's own CORS allow-list names non-standard request headers
+  (mcp-protocol-version, mcp-method, mcp-name), which suggests a bespoke envelope a stock MCP client does not
+  send. The tool names, count and inputSchemas are therefore unknown; nothing below is derived from the
+  OpenAPI to stand in for them.
+deployment:
+  mode: remote
+  endpoint: https://api.berrergate.com/mcp
+  auth: none
+  verified: probed
+  note: >-
+    A hosted HTTPS endpoint an MCP client POSTs to; BerrerGate ships no stdio package and documents no
+    npx/uvx install (no npm, PyPI, crates, RubyGems or Packagist package exists — see packages/). auth is
+    "none" in the connection sense: no credential is asked for and no OAuth metadata is served on this host
+    (/.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource both 404). Paid
+    actions are settled out-of-band over HTTP x402 (USDC on Base, eip155:8453) — the manifest's own _meta
+    says the MCP surface hands out purchase instructions rather than collecting payment.
+servers:
+- id: berrergate
+  name: BerrerGate Tool & Provider Intelligence
+  endpoint: https://api.berrergate.com/mcp
+  transport: streamable-http
+  http_methods: [POST]
+  auth: none
+  payment: none on the MCP surface; purchases happen over HTTP x402 at /v1/agent/beta/query and /v1/research
+  status: live-but-not-introspectable
+  manifest:
+    file: mcp/berrergate-com-mcp-server.json
+    url: https://api.berrergate.com/.well-known/mcp/server.json
+    schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+    name: com.berrergate/capability-wisdom
+    version: 1.0.0
+    declared_protocol_version: '2026-07-28'
+  probe:
+    fetched: '2026-09-19'
+    get_request: {http_status: 404, body: '{"ok":false,"error":"NOT_FOUND",...}'}
+    tools_list_without_version_header:
+      http_status: 400
+      body: '{"ok":false,"error":"A10A10_MCP_PROTOCOL_VERSION_REQUIRED","required":"2026-07-28",...}'
+    tools_list_with_version_header:
+      request_headers: ['MCP-Protocol-Version: 2026-07-28', 'Accept: application/json, text/event-stream']
+      http_status: 200
+      body: '{"jsonrpc":"2.0","id":1,"error":{"code":-32600,"message":"Invalid MCP request","data":{"required_protocol_version":"2026-07-28"}}}'
+    tools_list_with_mcp_method_header:
+      request_headers: ['MCP-Protocol-Version: 2026-07-28', 'MCP-Method: tools/list']
+      http_status: 200
+      body: '{"jsonrpc":"2.0","id":1,"error":{"code":-32600,"message":"MCP _meta protocolVersion required","data":{"required":"2026-07-28"}}}'
+      note: >-
+        Also tried with params._meta.protocolVersion, a top-level _meta.protocolVersion, and both at once —
+        same -32600 each time. initialize behaves identically. Seven request shapes in total; none returned a
+        tool list.
+    tool_count: null
+    tools_file: null
+  authorship: provider
+  tools: []
+  tools_note: >-
+    Unknown — the live tools/list is unreachable with a standard client and the provider publishes no tool
+    reference. The AI Registry catalog entry names three capability labels (ToolDiscovery, CapabilityCheck,
+    PurchaseInstructions) and the A2A card's twelve skills describe the same product surface; see
+    mcp/berrergate-com-tool-crosswalk.yml for the semantic mapping of those to the REST contract, with
+    confidence set accordingly.

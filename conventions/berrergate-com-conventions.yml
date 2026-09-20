@@ -1,0 +1,131 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.berrergate.com/llms.txt
+derived_from: openapi/berrergate-com-openapi.json
+docs:
+- https://api.berrergate.com/skill.md
+- https://api.berrergate.com/v1/agent/utility/catalog
+- https://berrergate.com/privacy/
+base_url: https://api.berrergate.com
+media_type: application/json
+auth:
+  style: >-
+    None. No API key, token or account exists; every read and the free preview POSTs are anonymous. Paid
+    routes are gated per request by x402 payment (HTTP 402 -> settle -> retry with PAYMENT-SIGNATURE), USDC
+    on Base. See authentication/berrergate-com-authentication.yml.
+  detail: authentication/berrergate-com-authentication.yml
+idempotency:
+  supported: true
+  coverage: partial
+  mechanism: caller-generated key in a request header, required (400 IDEMPOTENCY_KEY_REQUIRED without it)
+  header: x-idempotency-key
+  scope:
+  - 'POST /v1/research'
+  - 'POST /v1/agent/beta/query'
+  - 'POST /v1/agent/trial/query'
+  - 'POST /v1/agent/utility/inference'
+  - 'POST /v1/agent/utility/spend-router'
+  - 'POST /v1/agent/wisdom/provider-select'
+  retention: undocumented
+  description: >-
+    Six of the nine POST routes declare an x-idempotency-key header parameter and the server enforces it —
+    POST /v1/research without the header answered 400 {"ok":false,"error":"IDEMPOTENCY_KEY_REQUIRED"} on
+    2026-09-19. Every route that can cost money carries it, which is the part that matters for an agent:
+    the same key replays the same paid request rather than paying twice. The utility catalog states
+    "provider_output_stored_for_idempotent_replay: true" and the privacy page that "ambiguous settlement
+    states are reconciled rather than automatically retried" (auto_retry_after_ambiguous_settlement: false
+    in the catalog). How long a key is honoured, and whether a key reused with a different body is rejected,
+    are not published.
+  gaps:
+  - No key on POST /v1/agent/procurement/preview or POST /v1/agent/discovery/preview (free, cache-only reads over POST — low consequence).
+  - No key on the A2A routes (POST /a2a/jsonrpc, POST /a2a/v1/message:send), which can trigger the same paid skills.
+  - No retention window or conflict semantics documented.
+dry_run_mode:
+  supported: true
+  status: documented
+  mechanism: free preview routes plus the x402 quote step
+  surfaces:
+  - operation: 'POST /v1/agent/procurement/preview'
+    cost: free
+    description: 'A "free procurement preview" of coverage and decision context for a capability before paying (GET /v1/agent/procurement/catalog lists the ten capability keys, all free_preview: true).'
+  - operation: 'GET /v1/agent/trial/catalog + POST /v1/agent/trial/query'
+    cost: free
+    description: 32 deterministic prewarmed "free-trial capability products" (not_for_sale true, payment_required false) that let an agent check whether BerrerGate already has intelligence for a capability "before paying".
+  - operation: 'first POST without PAYMENT-SIGNATURE on any paid route'
+    cost: free
+    description: 'Per llms.txt: "Omit PAYMENT-SIGNATURE on the first POST to receive the canonical x402 payment requirement" — the 402 body states the exact amount, asset, network and payTo before anything is charged (observed on POST /v1/research: 20000 atomic USDC).'
+  - operation: 'GET /v1/agent/utility/catalog'
+    cost: free
+    description: Publishes the dynamic price band (min/max atomic) and call caps for the inference product ahead of a call.
+reversibility:
+  grade: none
+  docs: null
+  note: >-
+    No cancel, refund, void or reversal operation exists in the contract and no refund policy is published
+    anywhere on the site (there is no Terms of Service page — /terms, /terms/ and /legal all 404). The
+    write surface consists of one-shot paid deliveries (a decision packet, an evidence brief, an inference
+    answer) settled by x402 with "one-shot settlement semantics"; the only post-purchase read is GET
+    /v1/agent/beta/receipts/{receipt_id}. The provider's own mitigations are pre-commit — the free preview,
+    the 402 quote, the required idempotency key and a hard "payment_before_provider_cost" ordering — not
+    post-commit. Nothing below asserts a window the provider has not written down.
+  write_surfaces:
+  - operation: 'POST /v1/agent/beta/query'
+    action: buy a $0.01 decision packet
+    reversal: null
+    window: null
+    receipt: 'GET /v1/agent/beta/receipts/{receipt_id}'
+  - operation: 'POST /v1/research'
+    action: buy a $0.020 Evidence Brief
+    reversal: null
+    window: null
+  - operation: 'POST /v1/agent/utility/inference'
+    action: buy a bounded AI answer ($0.00125-$0.00225)
+    reversal: null
+    window: null
+    note: The utility catalog states payment "is settled only after provider success and a positive direct-provider margin check" — a failed call is not charged, which is a pre-settlement guard, not a reversal.
+  - operation: 'POST /v1/agent/utility/spend-router'
+    action: paid read-only catalog route ($0.001)
+    reversal: null
+    window: null
+    note: STAGED_DISABLED on 2026-09-19.
+pagination:
+  style: none
+  note: Every list route (catalogs, sources, capabilities) returns the full set in one body; no cursor, page or limit parameters exist.
+field_expansion: {supported: false}
+sparse_fields: {supported: false}
+metadata: {supported: false}
+request_id:
+  response_fields: [trace_id, request_id]
+  header: null
+  note: Both fields appear in every success and error body (identical UUIDs); no X-Request-Id header is returned.
+versioning:
+  style: URI prefix /v1
+  detail: lifecycle/berrergate-com-lifecycle.yml
+error_envelope:
+  shape: '{"ok": false, "error": "<CODE>", "trace_id": "<uuid>", "request_id": "<uuid>"}'
+  exception: 402 bodies are the x402 v2 PaymentRequirements object; JSON-RPC routes return {"jsonrpc":"2.0","error":{code,message,data}} with HTTP 200
+  format: vendor-json (not RFC 9457)
+  detail: errors/berrergate-com-problem-types.yml
+rate_limit_signaling:
+  status: 429
+  headers: []
+  published_caps: 'utility catalog: inference daily_max_calls 75, lifetime_max_calls 150, per_payer_daily_max_calls 25'
+  detail: rate-limits/berrergate-com-rate-limits.yml
+caching:
+  observed: 'GET catalogs return cache-control: public, max-age=14400, s-maxage=300, stale-while-revalidate=60 with age and last-modified; paid POST errors return cache-control: no-store'
+cors:
+  access_control_allow_origin: '*'
+  allow_methods: [GET, POST, OPTIONS]
+  allow_headers: [content-type, x-bcg-client-version, x-bcg-admin-token, x-idempotency-key, x-agent-id, x-bcg-agent-id, x-bcg-telemetry-class, x-bcg-discovery-source, mcp-protocol-version, mcp-method, mcp-name, payment-signature]
+  expose_headers: [payment-required, payment-response]
+input_limits:
+  - {operation: 'POST /v1/research', field: query, limit: '1-700 chars'}
+  - {operation: 'POST /v1/research', field: max_evidence, limit: '1-5 (default 5)'}
+  - {operation: 'POST /v1/agent/utility/inference', field: prompt, limit: '<=3200 (3,200 UTF-8 bytes per llms.txt)'}
+  - {operation: 'POST /v1/agent/utility/inference', field: max_output_tokens, limit: '32-512'}
+  - {operation: 'POST /v1/agent/discovery/preview', field: query, limit: '1-300 chars; country <=2; source_key <=80'}
+  - {operation: 'POST /v1/agent/utility/spend-router', field: query, limit: '1-100 chars; country <=2; type <=40'}
+privacy_conventions:
+  raw_prompt_stored: false
+  raw_agent_id_stored: false
+  source: https://berrergate.com/privacy/ and every catalog body's privacy/telemetry block

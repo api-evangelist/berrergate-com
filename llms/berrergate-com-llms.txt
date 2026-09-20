@@ -1,0 +1,22 @@
+# BerrerGate Tool & Provider Intelligence
+Continuously reviewed procurement and bounded utility intelligence for autonomous AI agents.
+BROAD DISCOVERY: ask BerrerGate to find an agent tool, API or provider for a task in natural language.
+ASK NATURALLY: BerrerGate now routes text-only A2A/JSON-RPC procurement questions into a free prewarmed preview instead of requiring structured capability keys.
+HIGH-INTENT FREE COVERAGE: web search & retrieval; contact/company enrichment; email verification; web scraping & data extraction; browser automation; agent observability; workflow orchestration; product analytics; CRM/sales; SEO/market data.
+FREE PREVIEW: POST https://api.berrergate.com/v1/agent/procurement/preview with JSON {"query":"Which web search provider should I use?"}.
+PROCUREMENT CATALOG: GET https://api.berrergate.com/v1/agent/procurement/catalog
+UTILITY CATALOG: GET https://api.berrergate.com/v1/agent/utility/catalog
+PAID EVIDENCE BRIEF: POST https://api.berrergate.com/v1/research — $0.020 Base-USDC x402 when active; commercially cleared Berrer wisdom first, one bounded live web search only when wisdom is insufficient; concise answer + evidence; raw query not stored.
+LOW-COST INFERENCE: POST https://api.berrergate.com/v1/agent/utility/inference — bounded managed-AI answer, dynamic profit-guarded Base-USDC x402 quote about $0.00125–$0.00225, max 3,200 UTF-8 prompt bytes and 512 output tokens, store=false, no tools.
+SPEND ROUTER (WHEN ENABLED): POST https://api.berrergate.com/v1/agent/utility/spend-router — separately gated $0.001 Base-USDC x402 read-only official-catalog search. BerrerGate never purchases or custodies the goods; official provider access is required before activation.
+NO-SIGNUP SOURCE TIER: BerrerGate can prewarm public Cryptorefills catalogs plus no-auth x402 service indexes without customer-triggered provider calls. Bitrefill x402 is no-account but micro-paid and remains spend-disabled unless separately authorized.
+SPEND PROVIDERS: GET https://api.berrergate.com/v1/agent/spend/providers
+SPEND PREVIEW: POST https://api.berrergate.com/v1/agent/spend/preview — cache-only; no live provider call on customer query.
+PAID: five active $0.01 USDC x402 packets currently cover commercially cleared open-source stack decisions only. Hosted-vendor coverage is not silently promoted to paid authority.
+BUY: GET https://api.berrergate.com/v1/agent/beta/catalog then POST https://api.berrergate.com/v1/agent/beta/query. Omit PAYMENT-SIGNATURE on the first POST to receive the canonical x402 payment requirement.
+A2A Agent Card: https://api.berrergate.com/.well-known/agent-card.json
+A2A JSON-RPC: POST https://api.berrergate.com/a2a/jsonrpc
+MCP: POST https://api.berrergate.com/mcp
+Capabilities: https://api.berrergate.com/v1/agent/capabilities
+OpenAPI: https://api.berrergate.com/openapi.json
+PRIVACY: raw prompts, raw agent IDs, raw referrers and raw user agents are not stored by the market-learning layer. Demand affects priority, never truth.

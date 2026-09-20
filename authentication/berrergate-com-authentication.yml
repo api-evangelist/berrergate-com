@@ -1,0 +1,56 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.berrergate.com/llms.txt
+derived_from: openapi/berrergate-com-openapi.json
+docs:
+- https://api.berrergate.com/skill.md
+- https://api.berrergate.com/.well-known/x402.json
+summary: >-
+  BerrerGate has NO authentication scheme: the OpenAPI declares no securitySchemes and no security
+  requirement, the A2A card declares securitySchemes {} and securityRequirements [], and no OAuth/OIDC
+  metadata is served on any host. Every read route and the free preview POSTs answer anonymously. Access to
+  the paid routes is gated economically, per request, by x402 payment: the first call returns HTTP 402 with
+  PaymentRequirements, and the retry carries a PAYMENT-SIGNATURE header settling USDC on Base. There are no
+  accounts, API keys, tokens or signups ("without creating a traditional account"). derive-authentication.py
+  produced no profile because the contract declares nothing; this file was written from the observed
+  requests and the provider's own docs.
+schemes: []
+access_model:
+  anonymous_reads: true
+  anonymous_free_writes: ['POST /v1/agent/procurement/preview', 'POST /v1/agent/discovery/preview', 'POST /v1/agent/trial/query (free, x-idempotency-key required)', 'POST /a2a/jsonrpc', 'POST /a2a/v1/message:send']
+  payment_gated_writes: ['POST /v1/research ($0.020)', 'POST /v1/agent/beta/query ($0.01)', 'POST /v1/agent/utility/inference ($0.00125-$0.00225 dynamic)', 'POST /v1/agent/utility/spend-router ($0.001, currently disabled)', 'GET /v1/agent/canary/browser-automation-select ($0.01 one-shot)']
+  payment:
+    protocol: x402
+    version: 2
+    request_header: PAYMENT-SIGNATURE
+    challenge_header: PAYMENT-REQUIRED
+    response_header: PAYMENT-RESPONSE
+    scheme: exact
+    network: eip155:8453 (Base mainnet)
+    asset: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 (USD Coin, version 2)'
+    pay_to: '0x1090DDAf854Ff0f6A65F24a866C29C46fdDa0a8a'
+    max_timeout_seconds: 60
+    observed: 'POST /v1/research -> 402 with PAYMENT-REQUIRED header and x402Version 2 body, 2026-09-19'
+    note: Payment is per request and is not an identity; the provider states raw agent identifiers are not retained.
+request_headers:
+- name: x-idempotency-key
+  required: true
+  on: ['POST /v1/research', 'POST /v1/agent/beta/query', 'POST /v1/agent/trial/query', 'POST /v1/agent/utility/inference', 'POST /v1/agent/utility/spend-router', 'POST /v1/agent/wisdom/provider-select']
+  observed: 'omitting it on POST /v1/research -> 400 IDEMPOTENCY_KEY_REQUIRED'
+- name: x-agent-id
+  required: false
+  on: ['POST /v1/agent/trial/query (declared)']
+  note: Optional caller-supplied agent identifier; the CORS allow-list also names x-bcg-agent-id, x-bcg-client-version, x-bcg-telemetry-class and x-bcg-discovery-source, none of which the contract documents.
+- name: x-bcg-admin-token
+  required: false
+  note: Appears only in the Access-Control-Allow-Headers list. An operator credential, never documented or issued; not a customer scheme.
+- name: MCP-Protocol-Version
+  required: true
+  on: ['POST /mcp']
+  value: '2026-07-28'
+mcp:
+  auth: none
+  oauth_metadata: {oauth_authorization_server: 404, oauth_protected_resource: 404, openid_configuration: 404}
+a2a:
+  securitySchemes: {}
+  securityRequirements: []

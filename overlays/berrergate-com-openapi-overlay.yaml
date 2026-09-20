@@ -1,0 +1,221 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for the BerrerGate Tool & Provider Intelligence API
+  version: '2026-09-19'
+  description: 'Generated 2026-09-19 (method: generated). Adds operationIds (the provider declares none), tags,
+    x402 payment and idempotency annotations, and observed-behaviour notes to the verbatim provider spec. Every
+    target path was verified to exist in openapi/berrergate-com-openapi.json.'
+extends: ../openapi/berrergate-com-openapi.json
+actions:
+- target: $.info
+  update:
+    x-api-evangelist:
+      profile: https://github.com/api-evangelist/berrergate-com
+      note: Enhancements are applied by this overlay; the provider spec is kept verbatim in openapi/berrergate-com-openapi.json.
+- target: $.servers[0]
+  update:
+    description: Production API host (the only host; berrergate.com is the website and www.berrergate.com answers
+      522)
+- target: $
+  update:
+    tags:
+    - name: A2A
+    - name: Discovery
+    - name: Free Trial
+    - name: Paid Beta
+    - name: Procurement
+    - name: Research
+    - name: Utility
+    - name: Wisdom
+- target: $.paths['/v1/agent/canary/browser-automation-select'].get
+  update:
+    operationId: getBrowserAutomationSelectCanary
+    tags:
+    - Paid Beta
+- target: $.paths['/.well-known/ai-catalog.json'].get
+  update:
+    operationId: getAiRegistryCatalog
+    tags:
+    - Discovery
+- target: $.paths['/.well-known/agent-card.json'].get
+  update:
+    operationId: getAgentCard
+    tags:
+    - Discovery
+- target: $.paths['/skill.md'].get
+  update:
+    operationId: getSkillGuide
+    tags:
+    - Discovery
+- target: $.paths['/v1/agent/discovery/sources'].get
+  update:
+    operationId: listDiscoverySources
+    tags:
+    - Discovery
+- target: $.paths['/v1/agent/discovery/preview'].post
+  update:
+    operationId: previewDiscovery
+    tags:
+    - Discovery
+- target: $.paths['/v1/agent/procurement/catalog'].get
+  update:
+    operationId: listProcurementCapabilities
+    tags:
+    - Procurement
+- target: $.paths['/v1/agent/procurement/preview'].post
+  update:
+    operationId: previewProcurement
+    tags:
+    - Procurement
+- target: $.paths['/v1/agent/trial/catalog'].get
+  update:
+    operationId: listTrialProducts
+    tags:
+    - Free Trial
+- target: $.paths['/v1/agent/trial/query'].post
+  update:
+    operationId: queryTrialProduct
+    tags:
+    - Free Trial
+- target: $.paths['/v1/agent/utility/catalog'].get
+  update:
+    operationId: listUtilityProducts
+    tags:
+    - Utility
+- target: $.paths['/v1/agent/utility/inference'].post
+  update:
+    operationId: runMicroInference
+    tags:
+    - Utility
+- target: $.paths['/v1/agent/utility/spend-router'].post
+  update:
+    operationId: routeSpendCatalog
+    tags:
+    - Utility
+- target: $.paths['/v1/research'].post
+  update:
+    operationId: createEvidenceBrief
+    tags:
+    - Research
+- target: $.paths['/v1/search'].post
+  update:
+    operationId: legacyPaidSearch
+    tags:
+    - Research
+- target: $.paths['/v1/agent/beta/catalog'].get
+  update:
+    operationId: listPaidBetaProducts
+    tags:
+    - Paid Beta
+- target: $.paths['/v1/agent/beta/query'].post
+  update:
+    operationId: queryPaidBetaProduct
+    tags:
+    - Paid Beta
+- target: $.paths['/v1/agent/beta/receipts/{receipt_id}'].get
+  update:
+    operationId: getPaidBetaReceipt
+    tags:
+    - Paid Beta
+- target: $.paths['/v1/agent/value-catalog'].get
+  update:
+    operationId: listValueHypotheses
+    tags:
+    - Wisdom
+- target: $.paths['/v1/agent/wisdom/discovery'].get
+  update:
+    operationId: getWisdomDiscovery
+    tags:
+    - Wisdom
+- target: $.paths['/v1/agent/wisdom/provider-select'].post
+  update:
+    operationId: selectProviderLegacy
+    tags:
+    - Wisdom
+- target: $.paths['/v1/agent/capabilities'].get
+  update:
+    operationId: listAgentCapabilities
+    tags:
+    - Discovery
+- target: $.paths['/v1/agent/decision'].get
+  update:
+    operationId: getFreeProviderDecision
+    tags:
+    - Wisdom
+- target: $.paths['/a2a/v1/message:send'].post
+  update:
+    operationId: a2aSendMessageHttp
+    tags:
+    - A2A
+- target: $.paths['/a2a/jsonrpc'].post
+  update:
+    operationId: a2aJsonRpc
+    tags:
+    - A2A
+- target: $.paths['/v1/agent/trial/query'].post
+  update:
+    x-idempotency:
+      header: x-idempotency-key
+      required: true
+      observed: 400 IDEMPOTENCY_KEY_REQUIRED without it (POST /v1/research, 2026-09-19)
+- target: $.paths['/v1/agent/utility/inference'].post
+  update:
+    x-idempotency:
+      header: x-idempotency-key
+      required: true
+      observed: 400 IDEMPOTENCY_KEY_REQUIRED without it (POST /v1/research, 2026-09-19)
+    x-payment:
+      protocol: x402
+      version: 2
+      network: eip155:8453
+      asset: USDC
+      challenge: HTTP 402 with PAYMENT-REQUIRED header; retry with PAYMENT-SIGNATURE
+- target: $.paths['/v1/agent/utility/spend-router'].post
+  update:
+    x-idempotency:
+      header: x-idempotency-key
+      required: true
+      observed: 400 IDEMPOTENCY_KEY_REQUIRED without it (POST /v1/research, 2026-09-19)
+    x-payment:
+      protocol: x402
+      version: 2
+      network: eip155:8453
+      asset: USDC
+      challenge: HTTP 402 with PAYMENT-REQUIRED header; retry with PAYMENT-SIGNATURE
+- target: $.paths['/v1/research'].post
+  update:
+    x-idempotency:
+      header: x-idempotency-key
+      required: true
+      observed: 400 IDEMPOTENCY_KEY_REQUIRED without it (POST /v1/research, 2026-09-19)
+    x-payment:
+      protocol: x402
+      version: 2
+      network: eip155:8453
+      asset: USDC
+      challenge: HTTP 402 with PAYMENT-REQUIRED header; retry with PAYMENT-SIGNATURE
+- target: $.paths['/v1/agent/beta/query'].post
+  update:
+    x-idempotency:
+      header: x-idempotency-key
+      required: true
+      observed: 400 IDEMPOTENCY_KEY_REQUIRED without it (POST /v1/research, 2026-09-19)
+    x-payment:
+      protocol: x402
+      version: 2
+      network: eip155:8453
+      asset: USDC
+      challenge: HTTP 402 with PAYMENT-REQUIRED header; retry with PAYMENT-SIGNATURE
+- target: $.paths['/v1/agent/wisdom/provider-select'].post
+  update:
+    x-idempotency:
+      header: x-idempotency-key
+      required: true
+      observed: 400 IDEMPOTENCY_KEY_REQUIRED without it (POST /v1/research, 2026-09-19)
+- target: $.paths['/v1/search'].post
+  update:
+    deprecated: true
+    x-retired: Declared 410; superseded by POST /v1/research
+- target: $.paths['/v1/agent/decision'].get
+  update:
+    x-observed: 503 {"ok":false,"error":"decisionSort is not defined"} on 2026-09-19 although only 200 is declared

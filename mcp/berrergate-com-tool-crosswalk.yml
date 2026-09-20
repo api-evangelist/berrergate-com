@@ -1,0 +1,158 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/berrergate-com-openapi.json
+derived_from:
+- a2a/berrergate-com-agent-card.json
+- well-known/berrergate-com-ai-catalog.json
+- mcp/berrergate-com-mcp-server.json
+summary: >-
+  BerrerGate exposes one product surface three ways — a 25-operation OpenAPI 3.1 REST contract, an A2A agent
+  card with twelve skills, and an MCP server whose tool list could not be introspected (see
+  mcp/berrergate-com-mcp.yml). The REST contract declares NO operationIds, so rows bind to "METHOD /path"
+  instead. Because the live MCP tool schema is unreachable, the tool column below carries the A2A skill ids
+  and the three MCP capability labels the provider's own AI Registry catalog declares; every binding is by
+  name and documented semantics, never by an observed inputSchema, and confidence is set accordingly.
+surfaces:
+  openapi:
+    file: openapi/berrergate-com-openapi.json
+    url: https://api.berrergate.com/openapi.json
+    operations: 25
+    operation_ids: 0
+    gated: false
+  a2a:
+    card: a2a/berrergate-com-agent-card.json
+    endpoints: [https://api.berrergate.com/a2a/jsonrpc, https://api.berrergate.com/a2a/v1]
+    skills: 12
+    gated: false
+  mcp:
+    url: https://api.berrergate.com/mcp
+    manifest: mcp/berrergate-com-mcp-server.json
+    tools: null
+    gated: true
+    gate: non-standard handshake — every standard initialize/tools/list shape returns -32600; see mcp/berrergate-com-mcp.yml
+  graphql: null
+crosswalk:
+- tool: berrergate-find-agent-tool-api-provider
+  surface: a2a-skill
+  category: discovery
+  rest: ['POST /v1/agent/procurement/preview', 'GET /v1/agent/procurement/catalog']
+  binding: natural-language query -> procurement preview (free)
+  confidence: medium
+  note: llms.txt says text-only A2A questions are routed "into a free prewarmed preview"; the preview body is {query, capability_key?, intent?}.
+- tool: berrergate-procurement-preview
+  surface: a2a-skill
+  category: discovery
+  rest: ['POST /v1/agent/procurement/preview']
+  binding: same request body; free, cache-only
+  confidence: high
+- tool: berrergate-spend-provider-preview
+  surface: a2a-skill
+  category: discovery
+  rest: ['POST /v1/agent/discovery/preview', 'GET /v1/agent/discovery/sources']
+  binding: '{query, country, source_key} over the prewarmed gift-card / top-up / eSIM sources'
+  confidence: medium
+  note: llms.txt also names GET /v1/agent/spend/providers and POST /v1/agent/spend/preview (live 200), which are absent from the OpenAPI.
+- tool: berrergate-zero-signup-commerce-discovery
+  surface: a2a-skill
+  category: discovery
+  rest: ['POST /v1/agent/discovery/preview', 'GET /v1/agent/discovery/sources']
+  binding: same discovery preview across x402 services, MCP servers and public-API directories
+  confidence: high
+- tool: berrergate-evidence-brief
+  surface: a2a-skill
+  category: paid-research
+  rest: ['POST /v1/research']
+  binding: '{query (1-700 chars), max_evidence (1-5)}; x402 $0.020 USDC; x-idempotency-key required'
+  confidence: high
+- tool: berrergate-micro-inference
+  surface: a2a-skill
+  category: paid-utility
+  rest: ['POST /v1/agent/utility/inference', 'GET /v1/agent/utility/catalog']
+  binding: '{prompt (<=3200 bytes), max_output_tokens (32-512)}; dynamic x402 quote $0.00125-$0.00225'
+  confidence: high
+- tool: berrergate-purchase
+  surface: a2a-skill
+  category: paid-decision
+  rest: ['GET /v1/agent/beta/catalog', 'POST /v1/agent/beta/query', 'GET /v1/agent/beta/receipts/{receipt_id}']
+  binding: canonical x402 purchase instructions for one of five $0.01 packets
+  confidence: high
+- tool: berrergate-paid-1-agent-agent-observability
+  surface: a2a-skill
+  category: paid-decision
+  rest: ['POST /v1/agent/beta/query']
+  binding: 'capability_key agent.agent_observability, intent SELECT'
+  confidence: high
+- tool: berrergate-paid-2-agent-automation-orchestration
+  surface: a2a-skill
+  category: paid-decision
+  rest: ['POST /v1/agent/beta/query']
+  binding: 'capability_key agent.automation_orchestration, intent SELECT'
+  confidence: high
+- tool: berrergate-paid-3-agent-browser-scraping-automation
+  surface: a2a-skill
+  category: paid-decision
+  rest: ['POST /v1/agent/beta/query']
+  binding: 'capability_key agent.browser_scraping_automation, intent SELECT'
+  confidence: high
+- tool: berrergate-paid-4-agent-product-analytics
+  surface: a2a-skill
+  category: paid-decision
+  rest: ['POST /v1/agent/beta/query']
+  binding: 'capability_key agent.product_analytics, intent SELECT'
+  confidence: high
+- tool: berrergate-paid-5-agent-browser-automation
+  surface: a2a-skill
+  category: paid-decision
+  rest: ['POST /v1/agent/beta/query', 'GET /v1/agent/canary/browser-automation-select']
+  binding: 'capability_key agent.browser_automation, intent SELECT; the canary route is a one-shot paid variant of the same packet'
+  confidence: high
+- tool: ToolDiscovery
+  surface: mcp-capability-label
+  category: discovery
+  rest: ['POST /v1/agent/procurement/preview', 'POST /v1/agent/discovery/preview']
+  binding: by label only — the AI Registry catalog names the capability; no tool name or schema was observable
+  confidence: low
+- tool: CapabilityCheck
+  surface: mcp-capability-label
+  category: discovery
+  rest: ['GET /v1/agent/capabilities', 'GET /v1/agent/trial/catalog', 'POST /v1/agent/trial/query']
+  binding: 'by label — matches the "Free Capability Check" capability (real.dns.lookup) in GET /v1/agent/capabilities'
+  confidence: low
+- tool: PurchaseInstructions
+  surface: mcp-capability-label
+  category: paid-decision
+  rest: ['GET /v1/agent/beta/catalog']
+  binding: by label — the manifest _meta carries catalogUrl/purchaseUrl for /v1/agent/beta
+  confidence: low
+mcp_only: []
+rest_only:
+- operation: 'GET /.well-known/ai-catalog.json'
+  reason: discovery document, not a tool
+- operation: 'GET /.well-known/agent-card.json'
+  reason: discovery document, not a tool
+- operation: 'GET /skill.md'
+  reason: documentation
+- operation: 'GET /v1/agent/value-catalog'
+  reason: non-commercial hypotheses; no skill advertises it
+- operation: 'GET /v1/agent/wisdom/discovery'
+  reason: legacy; no skill advertises it
+- operation: 'POST /v1/agent/wisdom/provider-select'
+  reason: legacy; no skill advertises it
+- operation: 'GET /v1/agent/decision'
+  reason: 'no skill advertises it; returned 503 {"error":"decisionSort is not defined"} on 2026-09-19'
+- operation: 'POST /v1/agent/utility/spend-router'
+  reason: STAGED_DISABLED per the utility catalog; the spend-provider skill maps to the free discovery preview instead
+- operation: 'POST /v1/search'
+  reason: declared 410 Gone (superseded)
+- operation: 'POST /a2a/v1/message:send'
+  reason: the A2A transport itself
+- operation: 'POST /a2a/jsonrpc'
+  reason: the A2A transport itself
+coverage:
+  a2a_skills: 12
+  a2a_skills_mapped: 12
+  mcp_tools: null
+  mcp_labels_mapped: 3
+  rest_operations: 25
+  rest_operations_bound: 14
+  rest_only: 11

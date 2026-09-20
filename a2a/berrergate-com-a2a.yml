@@ -1,0 +1,130 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.berrergate.com/.well-known/agent-card.json
+card:
+  file: a2a/berrergate-com-agent-card.json
+  name: BerrerGate Tool & Provider Intelligence
+  url: https://api.berrergate.com/a2a/jsonrpc
+  version: 2.9.0
+  skills: 12
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: api.berrergate.com
+  note: >-
+    Served from the API host, which is also the OpenAPI servers[] host, the MCP host and both A2A endpoint
+    hosts. The apex berrergate.com 302s the canonical path to this URL, and the homepage's primary call to
+    action ("Agent Card") links straight to it. The legacy /.well-known/agent.json on the same host serves
+    the identical 8,039-byte body. Unknown /.well-known/* paths return the service's real JSON 404 and a
+    negative-control path also 404s, so the 200 is a served document. Ownership is not in question: the
+    card's provider.organization is "Berrer" with provider.url https://berrergate.com, the OpenAPI on the
+    same host titles itself "BerrerGate Tool & Provider Intelligence API", the homepage JSON-LD names the
+    provider Organization "Berrer", and the Global A2A Registry lists the agent under Berrer as Verified.
+conformance:
+  spec: A2A 1.0.0
+  grade: flavored
+  grade_note: >-
+    Graded against the catalog's three hard checks (lib_agent_card.grade_agent_card): capabilities IS an
+    object and skills IS an array, but there is NO top-level protocolVersion — the card carries
+    protocolVersion "1.0" inside each supportedInterfaces[] entry (the proto-derived 1.0 shape:
+    AgentInterface{url, protocolBinding, protocolVersion}) and no top-level url, preferredTransport or
+    additionalInterfaces. By the rubric that is a hard-check failure (no-protocolVersion) plus the
+    supportedInterfaces deviation, so the grade is flavored; a reader should know the card is nonetheless
+    internally consistent with the 1.0 interface model and was accepted as Verified by the Global A2A
+    Registry's own validator. It also omits the optional preferredTransport, and adds non-schema fields
+    (category, target_audience, extensions.berrergate).
+  protocol_version: '1.0'
+  protocol_version_location: supportedInterfaces[].protocolVersion (not top-level)
+  preferred_transport: null
+  interfaces:
+  - {url: 'https://api.berrergate.com/a2a/v1', protocolBinding: HTTP+JSON, protocolVersion: '1.0'}
+  - {url: 'https://api.berrergate.com/a2a/jsonrpc', protocolBinding: JSONRPC, protocolVersion: '1.0'}
+  deviations:
+  - no-protocolVersion
+  - supportedInterfaces-instead-of-additionalInterfaces
+  - no-top-level-url
+  - no-preferredTransport
+  - 'non-schema-fields (category, target_audience, extensions.berrergate)'
+  - 'securitySchemes-empty-object-and-securityRequirements-empty (anonymous by design; paid skills are x402-gated over HTTP)'
+  passes:
+  - 'capabilities is an object ({streaming: false, pushNotifications: false, extendedAgentCard: false})'
+  - skills is an array of 12 objects each with id, name, description, tags, examples, inputModes, outputModes
+  - 'defaultInputModes [application/json, text/plain] and defaultOutputModes [application/json] present'
+  - 'provider {organization, url} and documentationUrl present'
+  - served with content-type application/a2a+json
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://api.berrergate.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/a2a+json; charset=utf-8
+  body_bytes: 8039
+  body_parses_as: JSON object with AgentCard shape (name, description, supportedInterfaces, provider, version, documentationUrl, capabilities, securitySchemes, securityRequirements, defaultInputModes, defaultOutputModes, skills, extensions)
+  corroborating_probes:
+  - url: https://api.berrergate.com/.well-known/agent.json
+    http_status: 200
+    note: Legacy path; identical body.
+  - url: https://berrergate.com/.well-known/agent-card.json
+    http_status: 302
+    note: Redirects to the API-host card.
+  - url: https://www.berrergate.com/.well-known/agent-card.json
+    http_status: 522
+    note: Cloudflare origin unreachable on the www alias for every path.
+  - url: https://api.berrergate.com/a2a/jsonrpc
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"tasks/get","params":{"id":"apievangelist-nonexistent-probe"}}'
+    http_status: 200
+    response: '{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found"}}'
+    note: >-
+      A JSON-RPC 2.0 responder that does NOT implement tasks/get — consistent with the OpenAPI summary
+      "A2A JSON-RPC v1.0 SendMessage compatibility interface" (message/send only). No message was sent
+      and nothing was purchased.
+  - url: https://api.berrergate.com/a2a/jsonrpc
+    method: POST
+    body: '{"jsonrpc":"2.0","id":2,"method":"agent/getAuthenticatedExtendedCard","params":{}}'
+    http_status: 200
+    response: '{"jsonrpc":"2.0","id":2,"error":{"code":-32601,"message":"Method not found"}}'
+  - url: https://api.berrergate.com/a2a/v1
+    http_status: 404
+    note: GET on the HTTP+JSON interface root returns the JSON 404; the declared route is POST /a2a/v1/message:send.
+  - url: https://api.berrergate.com/.well-known/apievangelist-negative-control-7f3a9c.json
+    http_status: 404
+  - url: https://www.a2a-registry.org/agent/com.berrergate.berrergate_capability_wisdom_agent
+    http_status: 200
+    note: >-
+      The Global A2A Registry listing that put this provider in the harvest backlog: id
+      com.berrergate.berrergate_capability_wisdom_agent, owner Berrer, "Registered: Aug 27, 2026",
+      badge "Verified Agent", and — at fetch time — "Unreachable: This agent has failed 14 consecutive
+      health checks", which contradicts our own same-day 200s on the card, the OpenAPI and the JSON-RPC
+      endpoint. The registry was the lead; the card above was fetched directly from the provider's host.
+agent_card:
+  name: BerrerGate Tool & Provider Intelligence
+  description: >-
+    Agent-first capability intelligence with free discovery, a wisdom-first paid Evidence Brief, low-cost
+    no-web inference, and commercially cleared stack decisions. Payments use Base USDC via x402.
+  version: 2.9.0
+  provider: {organization: Berrer, url: https://berrergate.com}
+  documentation_url: https://api.berrergate.com/openapi.json
+  capabilities: {streaming: false, pushNotifications: false, extendedAgentCard: false}
+  security_schemes: {}
+  security_requirements: []
+  default_input_modes: [application/json, text/plain]
+  default_output_modes: [application/json]
+  skill_count: 12
+  skills:
+  - {id: berrergate-find-agent-tool-api-provider, name: 'Find an Agent Tool, API or Provider', cost: free}
+  - {id: berrergate-procurement-preview, name: Get a Free Procurement Preview, cost: free}
+  - {id: berrergate-spend-provider-preview, name: 'Scout Gift Card, Top-Up & eSIM Providers', cost: 'free (read-only preview)'}
+  - {id: berrergate-zero-signup-commerce-discovery, name: 'Discover Digital Goods, x402 Services, MCP Servers & Public APIs', cost: 'free (cache-only)'}
+  - {id: berrergate-evidence-brief, name: Berrer Evidence Brief, cost: '$0.020 USDC via x402 on Base'}
+  - {id: berrergate-micro-inference, name: Low-Cost Pay-Per-Call AI Answer, cost: 'about $0.00125-$0.00225 USDC, dynamic'}
+  - {id: berrergate-purchase, name: Buy a Commercially Cleared Open-Source Stack Decision, cost: 'purchase instructions for $0.01 packets'}
+  - {id: berrergate-paid-1-agent-agent-observability, name: Choose an Open-Source Agent Observability Stack, cost: '$0.01 USDC'}
+  - {id: berrergate-paid-2-agent-automation-orchestration, name: Choose an Open-Source Automation Orchestration Stack, cost: '$0.01 USDC'}
+  - {id: berrergate-paid-3-agent-browser-scraping-automation, name: Choose an Open-Source Browser & Scraping Stack, cost: '$0.01 USDC'}
+  - {id: berrergate-paid-4-agent-product-analytics, name: Choose an Open-Source Product Analytics Stack, cost: '$0.01 USDC'}
+  - {id: berrergate-paid-5-agent-browser-automation, name: Choose an Open-Source Browser Automation Stack, cost: '$0.01 USDC'}
+  extensions_note: >-
+    extensions.berrergate is a provider-specific object of release flags (release_contract, evidence-brief
+    price 20000 atomic, purchase_authority false, active_utility_keys [inference]); it is not an A2A
+    AgentExtension declaration and no capabilities.extensions[] (e.g. a2a-x402) is declared even though the
+    paid skills settle over x402.
