@@ -22,7 +22,7 @@ created: '2026-09-19'
 modified: '2026-09-19'
 tags:
 - Agents
-- Agent Commerce
+- Agentic Commerce
 - A2A
 - MCP
 - x402
@@ -44,6 +44,7 @@ tags_raw:
 - AI inference
 - Research
 - Agent-native
+- Agent Commerce
 apis:
 - aid: berrergate-com:berrergate-tool-provider-intelligence-api
   name: BerrerGate Tool & Provider Intelligence API
@@ -93,6 +94,10 @@ apis:
   humanURL: https://berrergate.com/status/
   baseURL: https://api.berrergate.com/mcp
   tags:
+  - MCP
+  - agent-native
+  - Agentic Commerce
+  tags_raw:
   - MCP
   - agent-native
   - Agent Commerce
