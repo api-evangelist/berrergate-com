@@ -1,0 +1,55 @@
+{
+  "provider": "berrergate-com",
+  "sources": [
+    "berrergate-com-openapi.json"
+  ],
+  "outputs": [
+    "berrergate-com-well-known-api-openapi.yml",
+    "berrergate-com-a2a-api-openapi.yml",
+    "berrergate-com-agent-api-openapi.yml",
+    "berrergate-com-research-api-openapi.yml",
+    "berrergate-com-search-api-openapi.yml",
+    "berrergate-com-skill-md-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/berrergate-com-openapi.json"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "berrergate-com-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/canary/browser-automation-select -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /.well-known/ai-catalog.json -> .well Known",
+    "berrergate-com-openapi.json: tagged paths GET /.well-known/agent-card.json -> .well Known",
+    "berrergate-com-openapi.json: tagged paths GET /skill.md -> Skill.md",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/discovery/sources -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/agent/discovery/preview -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/procurement/catalog -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/agent/procurement/preview -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/trial/catalog -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/agent/trial/query -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/utility/catalog -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/agent/utility/inference -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/agent/utility/spend-router -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/research -> Research",
+    "berrergate-com-openapi.json: tagged paths POST /v1/search -> Search",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/beta/catalog -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/agent/beta/query -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/beta/receipts/{receipt_id} -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/value-catalog -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/wisdom/discovery -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /v1/agent/wisdom/provider-select -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/capabilities -> Agent",
+    "berrergate-com-openapi.json: tagged paths GET /v1/agent/decision -> Agent",
+    "berrergate-com-openapi.json: tagged paths POST /a2a/v1/message:send -> A2a",
+    "berrergate-com-openapi.json: tagged paths POST /a2a/jsonrpc -> A2a",
+    "berrergate-com-openapi.json: declared missing tag: .well Known",
+    "berrergate-com-openapi.json: declared missing tag: A2a",
+    "berrergate-com-openapi.json: declared missing tag: Agent",
+    "berrergate-com-openapi.json: declared missing tag: Research",
+    "berrergate-com-openapi.json: declared missing tag: Search",
+    "berrergate-com-openapi.json: declared missing tag: Skill.md",
+    "apis.yml register: written (+6 apis, 8 total)"
+  ],
+  "skipped": []
+}

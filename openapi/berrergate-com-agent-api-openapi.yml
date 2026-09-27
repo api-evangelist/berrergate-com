@@ -1,0 +1,411 @@
+openapi: 3.2.0
+info:
+  title: BerrerGate Tool & Provider Intelligence Agent API
+  version: 2.9.0
+  description: Free cache-first discovery plus an explicitly gated $0.020 Base-USDC Berrer Evidence Brief, separate no-web inference, and commercially cleared decision products. Evidence Brief routes to commercially cleared wisdom first and uses at most one live search only when needed. Provider purchase and automatic upstream spend authority remain disabled.
+servers:
+- url: https://api.berrergate.com
+tags:
+- name: Agent
+paths:
+  /v1/agent/canary/browser-automation-select:
+    get:
+      summary: One-shot $0.01 USDC paid browser-automation SELECT canary
+      parameters:
+      - name: canary_token
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Paid canary product after one verified settlement
+        '402':
+          description: x402 payment required
+        '409':
+          description: Canary not armed or already consumed
+      tags:
+      - Agent
+      operationId: getV1AgentCanaryBrowserAutomationSelect
+      x-operation-id-source: derived
+  /v1/agent/discovery/sources:
+    get:
+      summary: List public no-signup discovery sources and cache state
+      responses:
+        '200':
+          description: Public source catalog; no provider call or payment
+      tags:
+      - Agent
+      operationId: getV1AgentDiscoverySources
+      x-operation-id-source: derived
+  /v1/agent/discovery/preview:
+    post:
+      summary: Search prewarmed digital-goods, x402, MCP and public-API discovery cache
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - query
+              properties:
+                query:
+                  type: string
+                  minLength: 1
+                  maxLength: 300
+                country:
+                  type: string
+                  maxLength: 2
+                source_key:
+                  type: string
+                  maxLength: 80
+      responses:
+        '200':
+          description: Cache-only privacy-minimized discovery preview; no upstream provider call or payment
+      tags:
+      - Agent
+      operationId: postV1AgentDiscoveryPreview
+      x-operation-id-source: derived
+  /v1/agent/procurement/catalog:
+    get:
+      summary: List free procurement-preview capability categories
+      responses:
+        '200':
+          description: Procurement preview catalog
+      tags:
+      - Agent
+      operationId: getV1AgentProcurementCatalog
+      x-operation-id-source: derived
+  /v1/agent/procurement/preview:
+    post:
+      summary: Resolve a natural-language procurement ask into a bounded free preview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                capability_key:
+                  type: string
+                intent:
+                  type: string
+      responses:
+        '200':
+          description: Privacy-minimized procurement preview; no payment or external fetch
+      tags:
+      - Agent
+      operationId: postV1AgentProcurementPreview
+      x-operation-id-source: derived
+  /v1/agent/trial/catalog:
+    get:
+      summary: List activated free-trial capability products
+      responses:
+        '200':
+          description: Free-trial product catalog
+        '503':
+          description: Trial not activated
+      tags:
+      - Agent
+      operationId: getV1AgentTrialCatalog
+      x-operation-id-source: derived
+  /v1/agent/trial/query:
+    post:
+      summary: Query a deterministic prewarmed free-trial capability product
+      parameters:
+      - name: x-idempotency-key
+        in: header
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+      - name: x-agent-id
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 200
+        description: Optional agent identifier. It is hashed into a non-reversible bucket and is not stored raw.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - capability_key
+              - intent
+              properties:
+                capability_key:
+                  type: string
+                intent:
+                  type: string
+                  enum:
+                  - SELECT
+                  - COMPARE
+                  - TRANSACTION_READINESS
+                  - COST_ESTIMATE
+                  - CHANGE
+                  - RISK
+                  - MARKET_MAP
+                geography:
+                  type: string
+                profile:
+                  type: string
+      responses:
+        '200':
+          description: Prewarmed product hit
+        '404':
+          description: No activated product for the exact capability/intent
+        '409':
+          description: Idempotency conflict
+        '429':
+          description: Trial rate limit
+        '503':
+          description: Trial not activated
+      tags:
+      - Agent
+      operationId: postV1AgentTrialQuery
+      x-operation-id-source: derived
+  /v1/agent/utility/catalog:
+    get:
+      summary: List A10A17 bounded utility products and pricing rules
+      responses:
+        '200':
+          description: Utility catalog
+      tags:
+      - Agent
+      operationId: getV1AgentUtilityCatalog
+      x-operation-id-source: derived
+  /v1/agent/utility/inference:
+    post:
+      summary: Low-cost x402 AI inference with dynamic profit-guarded quote
+      parameters:
+      - name: x-idempotency-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: PAYMENT-SIGNATURE
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - prompt
+              properties:
+                prompt:
+                  type: string
+                  maxLength: 3200
+                max_output_tokens:
+                  type: integer
+                  minimum: 32
+                  maximum: 512
+      responses:
+        '200':
+          description: Settled bounded inference result
+        '402':
+          description: Dynamic x402 quote
+        '409':
+          description: Existing non-settled payment; do not retry
+        '429':
+          description: Utility budget reached
+        '503':
+          description: Provider/configuration unavailable
+      tags:
+      - Agent
+      operationId: postV1AgentUtilityInference
+      x-operation-id-source: derived
+  /v1/agent/utility/spend-router:
+    post:
+      summary: Separately gated paid read-only official-catalog route for gift cards…
+      parameters:
+      - name: x-idempotency-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: PAYMENT-SIGNATURE
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - query
+              properties:
+                query:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                country:
+                  type: string
+                  maxLength: 2
+                type:
+                  type: string
+                  maxLength: 40
+      responses:
+        '200':
+          description: Settled catalog routing result; no purchase/custody
+        '402':
+          description: x402 quote
+        '429':
+          description: Utility budget reached
+        '503':
+          description: Catalog provider unavailable
+      tags:
+      - Agent
+      operationId: postV1AgentUtilitySpendRouter
+      x-operation-id-source: derived
+  /v1/agent/beta/catalog:
+    get:
+      summary: List the experimental limited paid-beta products
+      responses:
+        '200':
+          description: Paid-beta catalog; enabled field reports live activation state
+      tags:
+      - Agent
+      operationId: getV1AgentBetaCatalog
+      x-operation-id-source: derived
+  /v1/agent/beta/query:
+    post:
+      summary: Query a bounded x402-paid capability product
+      parameters:
+      - name: x-idempotency-key
+        in: header
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+      - name: PAYMENT-SIGNATURE
+        in: header
+        required: false
+        schema:
+          type: string
+        description: x402 v2 payment signature. Omit to receive the 402 payment requirement.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - capability_key
+              - intent
+              properties:
+                capability_key:
+                  type: string
+                intent:
+                  type: string
+                geography:
+                  type: string
+                profile:
+                  type: string
+      responses:
+        '200':
+          description: Paid product delivery with receipt id and transaction hash
+        '402':
+          description: x402 payment requirement or invalid payment
+        '404':
+          description: No allowlisted beta product
+        '409':
+          description: Existing indeterminate payment; do not retry
+        '429':
+          description: Hard beta budget reached
+      tags:
+      - Agent
+      operationId: postV1AgentBetaQuery
+      x-operation-id-source: derived
+  /v1/agent/beta/receipts/{receipt_id}:
+    get:
+      summary: Read a paid-beta settlement receipt
+      parameters:
+      - name: receipt_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Receipt with transaction hash
+        '404':
+          description: Receipt not found
+      tags:
+      - Agent
+      operationId: getV1AgentBetaReceiptsByReceiptId
+      x-operation-id-source: derived
+  /v1/agent/value-catalog:
+    get:
+      summary: Inspect non-commercial agent-value hypotheses
+      responses:
+        '200':
+          description: Hypothesis catalog; not for sale
+      tags:
+      - Agent
+      operationId: getV1AgentValueCatalog
+      x-operation-id-source: derived
+  /v1/agent/wisdom/discovery:
+    get:
+      summary: Inspect legacy wisdom coverage
+      responses:
+        '200':
+          description: Wisdom discovery
+      tags:
+      - Agent
+      operationId: getV1AgentWisdomDiscovery
+      x-operation-id-source: derived
+  /v1/agent/wisdom/provider-select:
+    post:
+      summary: Legacy evidence-backed provider selection
+      parameters:
+      - name: x-idempotency-key
+        in: header
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+      responses:
+        '200':
+          description: Provider selection
+        '404':
+          description: No eligible cached answer
+        '409':
+          description: Idempotency key reused for different query
+      tags:
+      - Agent
+      operationId: postV1AgentWisdomProviderSelect
+      x-operation-id-source: derived
+  /v1/agent/capabilities:
+    get:
+      summary: List machine-consumable capabilities
+      responses:
+        '200':
+          description: Capability catalog
+      tags:
+      - Agent
+      operationId: getV1AgentCapabilities
+      x-operation-id-source: derived
+  /v1/agent/decision:
+    get:
+      summary: Get deterministic free-provider decision
+      responses:
+        '200':
+          description: Read-only advisory decision
+      tags:
+      - Agent
+      operationId: getV1AgentDecision
+      x-operation-id-source: derived

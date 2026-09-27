@@ -29,9 +29,9 @@ tags:
 - Procurement
 - Tool Discovery
 - API Discovery
-- AI Inference
+- Inference
 - Research
-- agent-native
+- Agent-Native
 tags_raw:
 - Agents
 - Agent commerce
@@ -45,57 +45,24 @@ tags_raw:
 - Research
 - Agent-native
 - Agent Commerce
+- agent-native
+- AI Inference
 apis:
-- aid: berrergate-com:berrergate-tool-provider-intelligence-api
-  name: BerrerGate Tool & Provider Intelligence API
-  description: >-
-    Agent-consumable REST API at https://api.berrergate.com: free procurement and discovery previews over
-    ten capability categories and eight prewarmed sources, a 32-product free-trial catalog, x402-paid
-    routes for five $0.01 USDC open-source stack decision packets, a $0.020 Evidence Brief and dynamic
-    $0.00125-$0.00225 micro-inference, settlement receipts, machine-consumable capability and value
-    catalogs, and the A2A transport routes. 25 operations across 25 paths, OpenAPI 3.1.0, version 2.9.0,
-    no securitySchemes (anonymous plus per-request x402), x-idempotency-key required on every paid write,
-    no operationIds declared.
-  humanURL: https://berrergate.com/status/
-  baseURL: https://api.berrergate.com
-  tags:
-  - Agents
-  - Procurement
-  - Tool Discovery
-  - x402
-  - AI Inference
-  properties:
-  - type: OpenAPI
-    url: openapi/berrergate-com-openapi.json
-  - type: OpenAPI
-    name: BerrerGate OpenAPI 3.1 (provider-hosted)
-    url: https://api.berrergate.com/openapi.json
-  - type: APIReference
-    url: https://api.berrergate.com/openapi.json
-  - type: Documentation
-    url: https://berrergate.com/status/
-  - type: GettingStarted
-    name: Provider skill guide (skill.md)
-    url: https://api.berrergate.com/skill.md
-  - type: Overlay
-    url: overlays/berrergate-com-openapi-overlay.yaml
-  - type: ErrorCatalog
-    url: errors/berrergate-com-problem-types.yml
 - aid: berrergate-com:berrergate-mcp-server
   name: BerrerGate MCP Server
   description: >-
     Remote Model Context Protocol endpoint at https://api.berrergate.com/mcp (Streamable HTTP, POST only),
     declared in the provider's llms.txt, in an MCP server.json manifest at /.well-known/mcp/server.json
     (schema 2025-12-11, name com.berrergate/capability-wisdom, version 1.0.0) and in its AI Registry catalog
-    as a "stateless MCP 2026-07-28 discovery/intake adapter" that hands out x402 purchase instructions but
-    never settles money. The endpoint answers JSON-RPC 2.0 and demands MCP-Protocol-Version 2026-07-28, but
-    rejected every standard initialize and tools/list shape with -32600, so its tool list could not be
-    introspected; no credential is asked for and no OAuth metadata is served.
+    as a "stateless MCP 2026-07-28 discovery/intake adapter" that hands out x402 purchase instructions
+    but never settles money. The endpoint answers JSON-RPC 2.0 and demands MCP-Protocol-Version 2026-07-28,
+    but rejected every standard initialize and tools/list shape with -32600, so its tool list could not
+    be introspected; no credential is asked for and no OAuth metadata is served.
   humanURL: https://berrergate.com/status/
   baseURL: https://api.berrergate.com/mcp
   tags:
   - MCP
-  - agent-native
+  - Agent-Native
   - Agentic Commerce
   tags_raw:
   - MCP
@@ -116,15 +83,19 @@ apis:
   name: BerrerGate A2A Agent
   description: >-
     Agent2Agent surface: an agent card served from https://api.berrergate.com/.well-known/agent-card.json
-    (content-type application/a2a+json, version 2.9.0) declaring two interfaces — HTTP+JSON at /a2a/v1 and
-    JSON-RPC at /a2a/jsonrpc, each protocolVersion "1.0" — and twelve skills: four free discovery and
-    preview skills, the $0.020 Evidence Brief, dynamic-priced micro-inference, a purchase-instructions
+    (content-type application/a2a+json, version 2.9.0) declaring two interfaces — HTTP+JSON at /a2a/v1
+    and JSON-RPC at /a2a/jsonrpc, each protocolVersion "1.0" — and twelve skills: four free discovery
+    and preview skills, the $0.020 Evidence Brief, dynamic-priced micro-inference, a purchase-instructions
     skill and five $0.01 USDC open-source stack decision skills, all settled over x402 on Base. Streaming,
-    push notifications and the extended card are declared unsupported; only message/send is implemented on
-    the JSON-RPC endpoint. Registered in the Global A2A Registry on 2026-08-27 as a Verified agent.
+    push notifications and the extended card are declared unsupported; only message/send is implemented
+    on the JSON-RPC endpoint. Registered in the Global A2A Registry on 2026-08-27 as a Verified agent.
   humanURL: https://www.a2a-registry.org/agent/com.berrergate.berrergate_capability_wisdom_agent
   baseURL: https://api.berrergate.com/a2a/jsonrpc
   tags:
+  - A2A
+  - Agent-Native
+  - x402
+  tags_raw:
   - A2A
   - agent-native
   - x402
@@ -134,6 +105,114 @@ apis:
   - type: AgentCard
     name: A2A Agent Card (provider-hosted)
     url: https://api.berrergate.com/.well-known/agent-card.json
+- aid: berrergate-com:berrergate-com-a2a-api
+  name: Berrer A2a API
+  description: The A2a API from Berrer — 2 operation(s) for a2a.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com
+  tags:
+  - A2a
+  properties:
+  - type: OpenAPI
+    url: openapi/berrergate-com-a2a-api-openapi.yml
+  - type: APIReference
+    url: https://api.berrergate.com/openapi.json
+  - type: Documentation
+    url: https://berrergate.com/status/
+  - type: GettingStarted
+    url: https://api.berrergate.com/skill.md
+  - type: ErrorCatalog
+    url: errors/berrergate-com-problem-types.yml
+- aid: berrergate-com:berrergate-com-agent-api
+  name: Berrer Agent API
+  description: The Agent API from Berrer — 18 operation(s) for agent.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com
+  tags:
+  - Agent
+  properties:
+  - type: OpenAPI
+    url: openapi/berrergate-com-agent-api-openapi.yml
+  - type: APIReference
+    url: https://api.berrergate.com/openapi.json
+  - type: Documentation
+    url: https://berrergate.com/status/
+  - type: GettingStarted
+    url: https://api.berrergate.com/skill.md
+  - type: ErrorCatalog
+    url: errors/berrergate-com-problem-types.yml
+- aid: berrergate-com:berrergate-com-research-api
+  name: Berrer Research API
+  description: The Research API from Berrer — 1 operation(s) for research.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com
+  tags:
+  - Research
+  properties:
+  - type: OpenAPI
+    url: openapi/berrergate-com-research-api-openapi.yml
+  - type: APIReference
+    url: https://api.berrergate.com/openapi.json
+  - type: Documentation
+    url: https://berrergate.com/status/
+  - type: GettingStarted
+    url: https://api.berrergate.com/skill.md
+  - type: ErrorCatalog
+    url: errors/berrergate-com-problem-types.yml
+- aid: berrergate-com:berrergate-com-search-api
+  name: Berrer Search API
+  description: The Search API from Berrer — 1 operation(s) for search.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/berrergate-com-search-api-openapi.yml
+  - type: APIReference
+    url: https://api.berrergate.com/openapi.json
+  - type: Documentation
+    url: https://berrergate.com/status/
+  - type: GettingStarted
+    url: https://api.berrergate.com/skill.md
+  - type: ErrorCatalog
+    url: errors/berrergate-com-problem-types.yml
+- aid: berrergate-com:berrergate-com-skill-md-api
+  name: Berrer Skill.md API
+  description: The Skill.md API from Berrer — 1 operation(s) for skill.md.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com
+  tags:
+  - Skill.md
+  properties:
+  - type: OpenAPI
+    url: openapi/berrergate-com-skill-md-api-openapi.yml
+  - type: APIReference
+    url: https://api.berrergate.com/openapi.json
+  - type: Documentation
+    url: https://berrergate.com/status/
+  - type: GettingStarted
+    url: https://api.berrergate.com/skill.md
+  - type: ErrorCatalog
+    url: errors/berrergate-com-problem-types.yml
+- aid: berrergate-com:berrergate-com-well-known-api
+  name: Berrer .well Known API
+  description: The .well Known API from Berrer — 2 operation(s) for .well known.
+  humanURL: https://berrergate.com/status/
+  baseURL: https://api.berrergate.com
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/berrergate-com-well-known-api-openapi.yml
+  - type: APIReference
+    url: https://api.berrergate.com/openapi.json
+  - type: Documentation
+    url: https://berrergate.com/status/
+  - type: GettingStarted
+    url: https://api.berrergate.com/skill.md
+  - type: ErrorCatalog
+    url: errors/berrergate-com-problem-types.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -197,3 +276,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 29
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://api.berrergate.com/.well-known/agent-card.json"
+  grade: "flavored"
+  protocol_version: "1.0"
+  control: 404

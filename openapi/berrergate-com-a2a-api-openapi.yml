@@ -1,0 +1,31 @@
+openapi: 3.2.0
+info:
+  title: BerrerGate Tool & Provider Intelligence A2a API
+  version: 2.9.0
+  description: Free cache-first discovery plus an explicitly gated $0.020 Base-USDC Berrer Evidence Brief, separate no-web inference, and commercially cleared decision products. Evidence Brief routes to commercially cleared wisdom first and uses at most one live search only when needed. Provider purchase and automatic upstream spend authority remain disabled.
+servers:
+- url: https://api.berrergate.com
+tags:
+- name: A2a
+paths:
+  /a2a/v1/message:send:
+    post:
+      summary: A2A HTTP+JSON provider-decision skill
+      responses:
+        '200':
+          description: A2A Message response
+      tags:
+      - A2a
+      operationId: postA2aV1Message:send
+      x-operation-id-source: derived
+  /a2a/jsonrpc:
+    post:
+      summary: A2A JSON-RPC v1.0 SendMessage compatibility interface
+      description: Registry-compatible A2A JSON-RPC interface. It returns capability/purchase instructions only and never settles payment.
+      responses:
+        '200':
+          description: JSON-RPC 2.0 SendMessageResponse envelope
+      tags:
+      - A2a
+      operationId: postA2aJsonrpc
+      x-operation-id-source: derived

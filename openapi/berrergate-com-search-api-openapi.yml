@@ -1,0 +1,22 @@
+openapi: 3.2.0
+info:
+  title: BerrerGate Tool & Provider Intelligence Search API
+  version: 2.9.0
+  description: Free cache-first discovery plus an explicitly gated $0.020 Base-USDC Berrer Evidence Brief, separate no-web inference, and commercially cleared decision products. Evidence Brief routes to commercially cleared wisdom first and uses at most one live search only when needed. Provider purchase and automatic upstream spend authority remain disabled.
+servers:
+- url: https://api.berrergate.com
+tags:
+- name: Search
+paths:
+  /v1/search:
+    post:
+      deprecated: true
+      summary: Superseded paid search route
+      description: Superseded by /v1/research. No payment is accepted on this route.
+      responses:
+        '410':
+          description: Gone; use /v1/research
+      tags:
+      - Search
+      operationId: postV1Search
+      x-operation-id-source: derived

@@ -1,0 +1,60 @@
+openapi: 3.2.0
+info:
+  title: BerrerGate Tool & Provider Intelligence Research API
+  version: 2.9.0
+  description: Free cache-first discovery plus an explicitly gated $0.020 Base-USDC Berrer Evidence Brief, separate no-web inference, and commercially cleared decision products. Evidence Brief routes to commercially cleared wisdom first and uses at most one live search only when needed. Provider purchase and automatic upstream spend authority remain disabled.
+servers:
+- url: https://api.berrergate.com
+tags:
+- name: Research
+paths:
+  /v1/research:
+    post:
+      summary: Berrer Evidence Brief — $0.020 USDC
+      description: Wisdom-first evidence-backed research. Commercially cleared Berrer wisdom is used first; at most one live web-search tool call is used only when that wisdom is insufficient. Raw query is not stored.
+      parameters:
+      - name: x-idempotency-key
+        in: header
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+      - name: PAYMENT-SIGNATURE
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - query
+              additionalProperties: false
+              properties:
+                query:
+                  type: string
+                  minLength: 1
+                  maxLength: 700
+                max_evidence:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  default: 5
+      responses:
+        '200':
+          description: Settled evidence-backed research brief
+        '402':
+          description: x402 Base-USDC payment required or invalid payment
+        '429':
+          description: Canary budget reached
+        '502':
+          description: Post-settlement provider failure; no automatic retry
+        '503':
+          description: Evidence Brief disabled or provider configuration unavailable
+      tags:
+      - Research
+      operationId: postV1Research
+      x-operation-id-source: derived
