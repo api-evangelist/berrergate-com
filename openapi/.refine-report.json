@@ -1,7 +1,7 @@
 {
   "provider": "berrergate-com",
   "sources": [
-    "berrergate-com-openapi.json"
+    "_original/berrergate-com-openapi.json"
   ],
   "outputs": [
     "berrergate-com-well-known-api-openapi.yml",
@@ -11,12 +11,11 @@
     "berrergate-com-search-api-openapi.yml",
     "berrergate-com-skill-md-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/berrergate-com-openapi.json"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "berrergate-com-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "berrergate-com-openapi.json: tagged paths GET /v1/agent/canary/browser-automation-select -> Agent",
     "berrergate-com-openapi.json: tagged paths GET /.well-known/ai-catalog.json -> .well Known",
@@ -49,7 +48,14 @@
     "berrergate-com-openapi.json: declared missing tag: Research",
     "berrergate-com-openapi.json: declared missing tag: Search",
     "berrergate-com-openapi.json: declared missing tag: Skill.md",
-    "apis.yml register: written (+6 apis, 8 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "berrergate-com-a2a-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "berrergate-com-agent-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "berrergate-com-research-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "berrergate-com-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "berrergate-com-skill-md-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "berrergate-com-well-known-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
