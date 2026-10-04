@@ -111,6 +111,8 @@ apis:
   humanURL: https://berrergate.com/status/
   baseURL: https://api.berrergate.com
   tags:
+  - A2A
+  tags_raw:
   - A2a
   properties:
   - type: OpenAPI
@@ -129,6 +131,8 @@ apis:
   humanURL: https://berrergate.com/status/
   baseURL: https://api.berrergate.com
   tags:
+  - Agents
+  tags_raw:
   - Agent
   properties:
   - type: OpenAPI
