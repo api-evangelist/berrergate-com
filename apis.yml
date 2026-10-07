@@ -223,6 +223,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Pricing
+  url: https://api.berrergate.com/v1/agent/beta/catalog
 - type: Website
   url: https://berrergate.com/
 - type: Documentation
