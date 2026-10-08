@@ -85,3 +85,53 @@ payment:
   pay_to: '0x1090DDAf854Ff0f6A65F24a866C29C46fdDa0a8a'
   general_payment_collection_enabled: false
   note: '"general_payment_collection_enabled": false and "broad_production_selling_enabled": false in every catalog — only the named products above are sold.'
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units: []
+  plans:
+  - name: Free discovery and previews
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: Commercially cleared open-source stack decision packet
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: Berrer Evidence Brief
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: BerrerGate Micro-Inference
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: BerrerGate Spend Router
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: One-shot browser-automation SELECT canary
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
