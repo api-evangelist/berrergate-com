@@ -1,4 +1,4 @@
-generated: '2026-09-19'
+generated: '2026-09-23'
 method: generated
 source: openapi/berrergate-com-openapi.json
 description: Recommended x-agentic-access execution contracts, classified heuristically from
@@ -7,11 +7,11 @@ description: Recommended x-agentic-access execution contracts, classified heuris
 summary:
   operations: 25
   by_action_class:
-    connected: 14
-    acting: 11
+    connected: 16
+    acting: 9
   by_consequence:
-    read: 14
-    write: 9
+    read: 16
+    write: 7
     safety-critical: 1
     physical: 1
   human_in_the_loop_required: 1
@@ -112,18 +112,12 @@ operations:
 - path: /v1/agent/trial/query
   method: post
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v1/agent/utility/catalog
   method: get
   x-agentic-access:
@@ -205,18 +199,12 @@ operations:
 - path: /v1/agent/beta/query
   method: post
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v1/agent/beta/receipts/{receipt_id}
   method: get
   x-agentic-access:
